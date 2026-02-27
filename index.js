@@ -1,3 +1,3 @@
 require('total5');
 
-Total.run({ port: 8000, release: false });
+Total.run({ port: 8220, release: false });

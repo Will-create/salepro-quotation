@@ -1,20 +1,20 @@
 {
-	"pid": 13267,
-	"date": "2026-02-27T09:20:23.355Z",
+	"pid": 155161,
+	"date": "2026-02-27T21:42:18.969Z",
 	"stats": [
 		{
 			"id": "",
 			"version": {
-				"node": "v24.13.1",
+				"node": "v22.14.0",
 				"total": "5",
 				"build": 5015,
 				"app": "1.0.0"
 			},
-			"pid": 13267,
+			"pid": 155161,
 			"mode": "debug",
 			"overload": 0,
-			"date": "2026-02-27T09:27:23.858Z",
-			"memory": 8.85,
+			"date": "2026-02-27T21:52:19.238Z",
+			"memory": 16.15,
 			"rm": 0,
 			"fm": 0,
 			"wm": 0,
@@ -29,14 +29,14 @@
 			"dbrm": 0,
 			"dbwm": 0,
 			"usage": 0,
-			"requests": 0,
+			"requests": 14,
 			"pending": 0,
 			"external": 0,
 			"errors": 0,
 			"timeouts": 0,
 			"online": 0,
 			"download": 0,
-			"upload": 0
+			"upload": 0.063
 		}
 	]
 }
