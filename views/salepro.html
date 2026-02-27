@@ -1,0 +1,185 @@
+<section id="saleproPage"></section>
+
+<script>
+(async function(){
+  const root = document.getElementById('saleproPage');
+  if(!root) return;
+
+  function esc(v){
+    return String(v == null ? '' : v)
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/\"/g,'&quot;')
+      .replace(/'/g,'&#039;');
+  }
+
+  function sectionFeatures(list){
+    return (list || []).map((f,idx)=>`
+      <article class="card" style="padding:0;overflow:hidden;display:flex;flex-direction:column;">
+        <div style="padding:16px 16px 8px;display:flex;justify-content:space-between;align-items:center;gap:10px;">
+          <h3 style="font-size:19px">${esc(f.title)}</h3>
+          <span class="badge">Module ${idx+1}</span>
+        </div>
+        <ul style="padding:0 16px 16px 34px;display:grid;gap:7px;color:var(--muted);line-height:1.6;">
+          ${(f.items || []).map(it=>`<li>${esc(it)}</li>`).join('')}
+        </ul>
+      </article>
+    `).join('');
+  }
+
+  function faqs(list){
+    return (list || []).map((q,idx)=>`
+      <details class="card" ${idx===0?'open':''}>
+        <summary style="cursor:pointer;font-weight:700">${esc(q.q)}</summary>
+        <p class="muted" style="margin-top:10px">${esc(q.a)}</p>
+      </details>
+    `).join('');
+  }
+
+  function localizeSaleProFR(item){
+    if (!item || item.slug !== 'salepro-pos')
+      return item;
+
+    return {
+      ...item,
+      heroTitle: 'SalePro POS - Systeme POS, Stock, RH et Comptabilite sous Laravel',
+      heroSubtitle: 'SalePro POS est un logiciel open-source complet pour gerer stock, ventes, achats, paiements, equipe, clients et comptabilite depuis une seule plateforme.',
+      badges: ['Auto-heberge', 'Code source complet', 'Mises a jour a vie', 'En ligne / Hors ligne'],
+      marketingHighlights: [
+        'Interface POS moderne, tactile et rapide pour le terrain.',
+        'Controle de stock avance: lots, expiration, variantes et multi-depots.',
+        'Pilotage en temps reel avec tableaux de bord et rapports detailles.',
+        'Plateforme unifiee: POS + stock + RH + comptabilite.'
+      ],
+      keyBenefits: [
+        'Gestion de stock avancee avec expiration, variantes et multi-entrepots.',
+        'Interface POS moderne avec multi-devise et support des passerelles de paiement.',
+        'Tableau de bord intelligent avec rapports en temps reel.',
+        'Module RH integre: presence, paie, departements.',
+        'Module comptable: comptes bancaires, transferts et bilan.',
+        'Multi-langue, multi-devise, compatible fiscalite/GST.',
+        'Compatible scanner code-barres, imprimante ticket et balance.'
+      ],
+      coreFeatures: [
+        { title:'Tableau de bord', items:['Vue globale ventes, achats, retours, profits','Graphiques mensuels, flux de tresorerie, meilleurs produits','Activites recentes: ventes, achats, devis'] },
+        { title:'Produits', items:['Produits standards, digitaux, combo et services','Variantes, lots/expiration, IMEI/serie, support balance','Taxes, GST, prix promotionnels, impression code-barres','Import/Export CSV, unites produits, images multiples'] },
+        { title:'Ventes & POS', items:['Interface POS tactile','Paiement en plusieurs fois','Coupons, remises, taxes, frais de livraison, carte cadeau','Brouillon/hold, suspension de vente, paiements multiples','Paiements en ligne et options personnalisees, recu email / WhatsApp','Affichage client et gestion des agents de commission','Recherche par nom, code produit, code variante, IMEI/serie','Vente au prix detail ou grossiste'] },
+        { title:'Achats', items:['Gestion fournisseurs et bons de commande','Retours, taxes, remises, livraison','Televersement de documents, import CSV','Paiement achat et pieces justificatives'] },
+        { title:'Transferts & Ajustements de stock', items:['Transferts multi-depots','Inventaire et outils d\'ajustement','Ajustement de stock en masse via CSV'] },
+        { title:'Production / Fabrication', items:['Production de produits combo a partir d\'ingredients','Augmente le stock fini et reduit les ingredients selon ratio','Support recette / nomenclature (BOM)'] },
+        { title:'Comptabilite', items:['Comptes bancaires, transferts, bilan','Transactions liees automatiquement'] },
+        { title:'RH', items:['Dossiers employes, departements, paie','Presence, conges et absences'] },
+        { title:'Tiers (People)', items:['Clients, fournisseurs et profils mixtes','Soldes initiaux / dus clients-fournisseurs','Messages promotionnels WhatsApp en masse'] },
+        { title:'Rapports', items:['Ventes, achats, profits/pertes, paiements, clients, fournisseurs','Expiration stock, alertes, objectifs journaliers, rapports produits','Export CSV/PDF avec filtres avances'] },
+        { title:'Parametres', items:['Configuration facture et impression','Roles, permissions, groupes utilisateurs, taxes','Champs personnalises, SMS, sauvegarde','Mode sombre, affichage tableau, plans de remise'] }
+      ],
+      addons: [
+        'Add-on eCommerce - Lancez votre boutique eCommerce et pilotez-la depuis SalePro.',
+        'Add-on Restaurant - Gestion cuisine, salle, tables et serveurs (bientot).',
+        'Add-on WooCommerce - Synchronisez votre POS avec WooCommerce.'
+      ],
+      globalReady: 'SalePro prend en charge plus de 18 langues et toutes les devises. Facile a localiser et deployer.',
+      faq: [
+        { q:'Puis-je utiliser SalePro hors ligne ?', a:'Oui. Fonctionne avec Laragon (recommande), XAMPP ou MAMP. Le support officiel couvre surtout les serveurs en production.' },
+        { q:'Quels moyens de paiement sont supportes ?', a:'Cash, carte, Razorpay, cheque, carte cadeau, points de fidelite, plus des options de paiement personnalisees.' },
+        { q:'Les futures mises a jour sont-elles gratuites ?', a:'Oui, les mises a jour sont gratuites a vie.' }
+      ]
+    };
+  }
+
+  try {
+    const res = await fetch('/api/products/read/?slug=salepro-pos');
+    const out = await res.json();
+    if(!out || !out.ok || !out.item){
+      root.innerHTML = '<section class="card"><h3>Produit introuvable</h3></section>';
+      return;
+    }
+
+    const p = localizeSaleProFR(out.item);
+    const badges = (p.badges || []).map(b=>`<span class="badge" style="background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.25)">${esc(b)}</span>`).join(' ');
+    const highlights = (p.marketingHighlights || []).map(t=>`<li>${esc(t)}</li>`).join('');
+    const benefits = (p.keyBenefits || []).map(t=>`<li>${esc(t)}</li>`).join('');
+    const addOns = (p.addons || []).map(t=>`<li>${esc(t)}</li>`).join('');
+    const tagCloud = (p.tags || []).slice(0,22).map(t=>`<span class="tag-chip">#${esc(t)}</span>`).join(' ');
+
+    root.innerHTML = `
+      <section class="hero-band">
+        <div class="kicker">SalePro POS | Laravel</div>
+        <h1 class="h1">${esc(p.heroTitle || p.name)}</h1>
+        <p class="lead">${esc(p.heroSubtitle || p.short || '')}</p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px">${badges}</div>
+        <div class="actions">
+          <a class="btn btn-light" href="/salepro/quotation">Configurer un devis</a>
+          <a class="btn btn-outline" href="https://wa.me/22656920671" target="_blank" rel="noopener">Parler a un commercial</a>
+        </div>
+      </section>
+
+      <section class="section grid-2">
+        <article class="card">
+          <h3>Pourquoi SalePro accelere vos operations</h3>
+          <ul style="margin-top:10px;padding-left:18px;display:grid;gap:8px;color:var(--muted);line-height:1.7;">${highlights}</ul>
+          <div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:6px">${tagCloud}</div>
+        </article>
+        <div class="media" style="min-height:360px"><img src="${esc((p.images && p.images.hero) || 'https://picsum.photos/id/180/1400/820')}" alt="SalePro POS"/></div>
+      </section>
+
+      <section class="section">
+        <h2 style="font-family:'Sora',sans-serif;font-size:28px">Avantages cles</h2>
+        <div class="grid-2" style="margin-top:12px">
+          <article class="card">
+            <ul style="padding-left:18px;display:grid;gap:8px;color:var(--muted);line-height:1.7;">${benefits}</ul>
+          </article>
+          <div style="display:grid;gap:14px">
+            <div class="media" style="min-height:170px"><img src="${esc((p.images && p.images.pos) || 'https://picsum.photos/id/0/1200/760')}" alt="Interface POS"/></div>
+            <div class="media" style="min-height:170px"><img src="${esc((p.images && p.images.inventory) || 'https://picsum.photos/id/3/1200/760')}" alt="Inventory module"/></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 style="font-family:'Sora',sans-serif;font-size:28px">Fonctionnalites principales</h2>
+        <p class="muted" style="margin-top:8px">Un socle riche pour vente, achats, stock, RH, comptabilite et reporting.</p>
+        <div class="grid-3" style="margin-top:12px">${sectionFeatures(p.coreFeatures || [])}</div>
+      </section>
+
+      <section class="section grid-2">
+        <article class="card">
+          <h3>Extensions / Modules additionnels</h3>
+          <ul style="margin-top:10px;padding-left:18px;display:grid;gap:8px;color:var(--muted);line-height:1.7;">${addOns}</ul>
+          <h3 style="margin-top:16px">Pret pour l'international</h3>
+          <p class="muted" style="margin-top:8px">${esc(p.globalReady || '')}</p>
+        </article>
+        <div class="media" style="min-height:320px"><img src="${esc((p.images && p.images.reporting) || 'https://picsum.photos/id/20/1200/760')}" alt="Reporting SalePro"/></div>
+      </section>
+
+      <section class="section">
+        <h2 style="font-family:'Sora',sans-serif;font-size:28px">FAQ</h2>
+        <div style="display:grid;gap:10px;margin-top:12px">${faqs(p.faq || [])}</div>
+      </section>
+
+      <section class="section card" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:14px;">
+        <div>
+          <h3>Pret a lancer SalePro dans votre entreprise ?</h3>
+          <p class="muted" style="margin-top:6px">Generez un devis en quelques minutes et partagez-le en lien ou PDF.</p>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <a class="btn btn-dark" href="/salepro/quotation">Ouvrir le calculateur de devis</a>
+          <a class="btn btn-outline" href="https://wa.me/22656920671" target="_blank" rel="noopener">Contact WhatsApp</a>
+        </div>
+      </section>
+
+      <section class="section card">
+        <div class="badge">Suite SalePro</div>
+        <h3 style="margin-top:10px">Applications separees</h3>
+        <div class="info-list" style="margin-top:8px">
+          <div class="info-row"><span>SalePro POS</span><strong>Disponible</strong></div>
+          <div class="info-row"><span>SalePro Restaurant</span><strong><a href="/salepro/restaurant" style="text-decoration:underline">Vient bientot</a></strong></div>
+        </div>
+      </section>
+    `;
+  } catch (e) {
+    root.innerHTML = '<section class="card"><h3>Erreur de chargement du produit</h3><p class="muted">Reessayez dans quelques instants.</p></section>';
+  }
+})();
+</script>

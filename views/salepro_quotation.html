@@ -1,0 +1,1510 @@
+@{layout('')}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sale Pro — Calculateur de Devis</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@400;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root {
+  --primary:#1F3E52; --primary-l:#2F5C77; --primary-dim:#BDD0DD; --primary-bg:#EDF3F7;
+  --white:#FFFFFF; --accent:#B98A56; --accent-l:#D1A16E; --accent-bg:#F8F1E8;
+  --success:#2B8E63; --success-dim:#DBF0E5; --success-dk:#1E6647;
+  --text:#1F2B33; --text-m:#5B6873; --text-d:#95A0A9;
+  --bg:#F1F4F7; --bg-card:#FFFFFF; --bg-hover:#ECF2F6;
+  --border:#DDE5EB; --border-p:#BDD0DD;
+  --shadow-sm:0 1px 4px rgba(31,62,82,.08);
+  --shadow:0 10px 30px rgba(31,62,82,.10);
+  --shadow-lg:0 22px 50px rgba(31,62,82,.14);
+  --r:14px; --rs:10px; --rx:6px;
+  --sw:370px; --hh:70px; --tr:.2s cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Plus Jakarta Sans',sans-serif;
+  background:
+    radial-gradient(1300px 700px at 8% -12%, rgba(185,138,86,.12), transparent 65%),
+    radial-gradient(1100px 680px at 90% 0%, rgba(47,92,119,.12), transparent 62%),
+    linear-gradient(180deg,#F7F9FB 0%, var(--bg) 100%);
+  color:var(--text);min-height:100vh;line-height:1.6;font-size:15px;
+}
+button,input{font-family:inherit;}
+
+/* LAYOUT */
+.wrap{display:grid;grid-template-columns:1fr var(--sw);grid-template-rows:var(--hh) 1fr;min-height:100vh;}
+
+/* HEADER */
+header{
+  grid-column:1/-1;background:rgba(255,255,255,.88);
+  border-bottom:1px solid var(--border);
+  padding:0 36px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:200;box-shadow:var(--shadow-sm);backdrop-filter:blur(14px);
+}
+.logo-area{display:flex;align-items:center;gap:12px;}
+.logo-mark{
+  width:38px;height:38px;background:var(--primary);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Sora',sans-serif;font-size:.85rem;font-weight:700;color:#fff;
+}
+.logo-name{font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:700;color:var(--primary);}
+.logo-tag{font-size:.72rem;color:var(--text-m);display:block;margin-top:1px;}
+.view-toggle{
+  display:flex;align-items:center;background:var(--bg);
+  border:1px solid var(--border);border-radius:100px;padding:4px;gap:2px;position:relative;
+}
+.toggle-pill{
+  position:absolute;top:4px;left:4px;height:calc(100% - 8px);border-radius:100px;
+  background:linear-gradient(120deg,var(--primary-l),var(--primary));transition:transform .3s cubic-bezier(.4,0,.2,1),width .3s cubic-bezier(.4,0,.2,1);
+  pointer-events:none;box-shadow:0 6px 16px rgba(31,62,82,.25);
+}
+.tbtn{
+  position:relative;z-index:1;padding:8px 20px;border:none;background:transparent;
+  color:var(--text-m);font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:.82rem;font-weight:600;border-radius:100px;cursor:pointer;
+  transition:color var(--tr);white-space:nowrap;
+}
+.tbtn.active{color:#fff;}
+.hbadge{
+  background:var(--primary-bg);border:1px solid var(--primary-dim);color:var(--primary);
+  padding:5px 14px;border-radius:20px;font-size:.72rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:.06em;
+}
+
+/* FORM */
+.form-area{padding:32px 36px;overflow-y:auto;max-height:calc(100vh - var(--hh));background:transparent;}
+.progress-wrap{display:flex;gap:6px;margin-bottom:28px;}
+.progress-step{flex:1;height:4px;border-radius:2px;background:var(--border);transition:background var(--tr);}
+.progress-step.done{background:var(--primary);}
+
+/* SECTION */
+.section{
+  background:rgba(255,255,255,.88);border:1px solid var(--border);border-radius:var(--r);margin-bottom:16px;overflow:hidden;
+  transition:border-color var(--tr),box-shadow var(--tr);backdrop-filter:blur(8px);
+}
+.section.open{border-color:var(--border-p);box-shadow:var(--shadow);}
+.sec-hd{display:flex;align-items:center;gap:14px;padding:18px 22px;cursor:pointer;user-select:none;transition:background var(--tr);}
+.sec-hd:hover{background:var(--bg);}
+.section.open .sec-hd{border-bottom:1px solid var(--border);}
+.sec-num{
+  width:32px;height:32px;background:var(--bg);border:1px solid var(--border);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:.78rem;font-weight:700;color:var(--text-m);flex-shrink:0;transition:all var(--tr);
+}
+.section.open .sec-num{background:var(--primary);border-color:var(--primary);color:#fff;}
+.sec-title{font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;flex:1;color:var(--text);}
+.stag{font-size:.68rem;font-weight:600;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.05em;}
+.stag-r{background:var(--primary-bg);color:var(--primary);}
+.stag-o{background:var(--bg);color:var(--text-d);border:1px solid var(--border);}
+.stag-g{background:var(--success-dim);color:var(--success-dk);}
+.sec-chev{color:var(--text-d);font-size:.85rem;transition:transform var(--tr);}
+.section.open .sec-chev{transform:rotate(180deg);}
+.sec-body{padding:22px;display:none;}
+.section.open .sec-body{display:block;}
+
+/* SOL GRID */
+.sol-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.sol-card{
+  padding:20px 16px;border:2px solid var(--border);border-radius:var(--rs);
+  cursor:pointer;transition:all var(--tr);background:var(--white);text-align:center;user-select:none;
+}
+.sol-card:hover{border-color:var(--primary-dim);background:var(--primary-bg);}
+.sol-card.sel{border-color:var(--primary);background:var(--primary-bg);box-shadow:0 0 0 3px rgba(31,62,82,.10);}
+.sol-icon{font-size:1.8rem;margin-bottom:8px;}
+.sol-name{font-size:.88rem;font-weight:700;}
+.sol-sub{font-size:.73rem;color:var(--text-m);margin-top:3px;}
+
+/* CHOICE CARDS */
+.choice-group{display:flex;flex-direction:column;gap:10px;}
+.cc{
+  display:flex;align-items:flex-start;gap:14px;padding:16px 18px;
+  border:1.5px solid var(--border);border-radius:var(--rs);cursor:pointer;user-select:none;
+  transition:all var(--tr);background:var(--white);
+}
+.cc:hover{border-color:var(--primary-dim);background:var(--primary-bg);}
+.cc.sel{border-color:var(--primary);background:var(--primary-bg);}
+.cc.dis{opacity:.38;pointer-events:none;}
+.cradio,.ccheck{
+  appearance:none;flex-shrink:0;width:20px;height:20px;border:2px solid var(--border);
+  border-radius:50%;margin-top:1px;cursor:pointer;transition:all var(--tr);position:relative;
+}
+.ccheck{border-radius:5px;}
+.cc.sel .cradio{border-color:var(--primary);background:var(--primary);box-shadow:inset 0 0 0 3px #fff;}
+.cc.sel .ccheck{border-color:var(--primary);background:var(--primary);}
+.cc.sel .ccheck::after{
+  content:'';position:absolute;left:4px;top:1px;width:6px;height:10px;
+  border:2px solid #fff;border-top:none;border-left:none;transform:rotate(45deg);
+}
+.cbody{flex:1;min-width:0;}
+.cname{font-size:.92rem;font-weight:700;color:var(--text);}
+.cshort{font-size:.8rem;color:var(--text-m);margin-top:3px;line-height:1.4;}
+.cdetail{
+  display:none;font-size:.78rem;color:var(--text-m);margin-top:8px;line-height:1.5;
+  padding-top:8px;border-top:1px dashed var(--border);
+}
+.cdetail.open{display:block;}
+.rmore{
+  background:none;border:none;cursor:pointer;color:var(--primary);
+  font-size:.75rem;font-weight:600;padding:4px 0;margin-top:4px;
+  display:inline-flex;align-items:center;gap:4px;
+}
+.rmore:hover{color:var(--primary-l);}
+.rarr{transition:transform var(--tr);display:inline-block;}
+.cright{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+.cprice{font-size:.9rem;font-weight:700;color:var(--text);white-space:nowrap;}
+.badge-r{font-size:.65rem;font-weight:600;padding:2px 7px;border-radius:20px;background:var(--success-dim);color:var(--success-dk);}
+.badge-o{font-size:.65rem;font-weight:600;padding:2px 7px;border-radius:20px;background:var(--primary-bg);color:var(--primary);}
+
+/* SUBSECTIONS */
+.subsec{margin-top:20px;}
+.subsec+.subsec{border-top:1px solid var(--border);padding-top:20px;}
+.subsec-t{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--primary);margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+
+/* LICENCE TOGGLE */
+.lic-wrap{background:var(--bg);border:1.5px solid var(--border);border-radius:var(--rs);padding:18px 20px;margin-top:12px;}
+.lic-row{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.lic-info{flex:1;}
+.lic-label{font-size:.9rem;font-weight:700;}
+.lic-sub{font-size:.78rem;color:var(--text-m);margin-top:2px;}
+.ios-t{position:relative;width:48px;height:28px;flex-shrink:0;}
+.ios-t input{opacity:0;width:0;height:0;}
+.ios-s{position:absolute;inset:0;background:var(--border);border-radius:28px;cursor:pointer;transition:background var(--tr);}
+.ios-s::before{content:'';position:absolute;left:3px;top:3px;width:22px;height:22px;background:#fff;border-radius:50%;transition:transform var(--tr);box-shadow:0 1px 4px rgba(0,0,0,.2);}
+.ios-t input:checked+.ios-s{background:var(--primary);}
+.ios-t input:checked+.ios-s::before{transform:translateX(20px);}
+.lic-impact{margin-top:12px;padding:10px 14px;border-radius:var(--rx);font-size:.78rem;transition:all var(--tr);}
+.lic-on{background:var(--success-dim);color:var(--success-dk);}
+.lic-off{background:#FFF3E8;color:#B85400;}
+
+/* FIELDS */
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.frow.full{grid-template-columns:1fr;}
+.fg{display:flex;flex-direction:column;gap:6px;}
+.fg label{font-size:.75rem;font-weight:600;color:var(--text-m);text-transform:uppercase;letter-spacing:.05em;}
+.tf{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--rx);color:var(--text);font-size:.88rem;padding:11px 14px;outline:none;transition:border-color var(--tr),background var(--tr);}
+.tf:focus{border-color:var(--primary);background:#fff;}
+.tf::placeholder{color:var(--text-d);}
+.logo-up{border:2px dashed var(--border);border-radius:var(--rs);padding:22px;text-align:center;cursor:pointer;transition:all var(--tr);margin-bottom:18px;position:relative;background:var(--bg);}
+.logo-up:hover{border-color:var(--primary-dim);background:var(--primary-bg);}
+.logo-up input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;}
+.logo-prev{max-height:56px;max-width:180px;object-fit:contain;display:none;}
+.logo-icon{font-size:1.6rem;margin-bottom:6px;}
+.logo-txt{font-size:.8rem;color:var(--text-m);}
+.info-ban{display:flex;gap:10px;align-items:flex-start;padding:12px 16px;background:var(--primary-bg);border:1px solid var(--primary-dim);border-radius:var(--rx);font-size:.8rem;color:var(--primary);margin-bottom:18px;line-height:1.5;}
+
+/* SIDEBAR */
+.sidebar{background:rgba(255,255,255,.92);border-left:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:var(--hh);max-height:calc(100vh - var(--hh));overflow-y:auto;backdrop-filter:blur(8px);}
+.sb-top{
+  padding:18px 24px;border-bottom:1px solid var(--border);flex-shrink:0;
+  background:linear-gradient(125deg,var(--primary) 0%,#244B62 45%,#3B6D87 100%);
+}
+.sb-title{font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;color:#fff;margin-bottom:2px;}
+.sb-sub{font-size:.73rem;color:rgba(255,255,255,.65);}
+.sb-meta{padding:12px 24px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--bg);}
+.qrow{display:flex;justify-content:space-between;font-size:.73rem;color:var(--text-m);margin-bottom:4px;}
+.qrow span:last-child{font-weight:600;color:var(--text);}
+.sb-client{padding:12px 24px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.cprev-n{font-size:.9rem;font-weight:700;}
+.cprev-d{font-size:.74rem;color:var(--text-m);margin-top:2px;}
+.sb-admin{padding:10px 24px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.adm-btn{background:none;border:none;cursor:pointer;color:var(--text-d);font-size:.74rem;text-decoration:underline;display:block;}
+.adm-panel{display:none;margin-top:10px;}
+.adm-panel.open{display:block;}
+.disc-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rx);}
+.disc-row label{font-size:.8rem;font-weight:600;color:var(--text-m);flex:1;}
+.disc-inp{width:70px;background:#fff;border:1.5px solid var(--border);border-radius:var(--rx);color:var(--text);font-size:.9rem;padding:5px 10px;text-align:center;outline:none;}
+.disc-inp:focus{border-color:var(--primary);}
+.line-items{flex:1;padding:14px 24px;overflow-y:auto;min-height:80px;}
+.lsep{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-d);padding:8px 0 5px;}
+.li{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);gap:8px;animation:fadeUp .18s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+.li-n{font-size:.8rem;color:var(--text);flex:1;line-height:1.3;}
+.li-t{font-size:.62rem;font-weight:600;padding:2px 6px;border-radius:4px;margin-left:5px;}
+.li-t.once{background:var(--primary-bg);color:var(--primary);}
+.li-t.rec{background:var(--success-dim);color:var(--success-dk);}
+.li-a{font-size:.82rem;font-weight:700;white-space:nowrap;}
+.empty{text-align:center;padding:28px 10px;color:var(--text-d);font-size:.82rem;}
+.empty-ico{font-size:2rem;opacity:.3;margin-bottom:8px;}
+.totals{padding:18px 24px;border-top:2px solid var(--border);flex-shrink:0;}
+.trow{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;}
+.tl{font-size:.8rem;color:var(--text-m);}
+.ta{font-size:.95rem;font-weight:700;}
+.t-main{padding-top:12px;border-top:1px solid var(--border);margin-top:4px;}
+.t-main .tl{font-size:.88rem;font-weight:600;color:var(--primary);}
+.t-main .ta{font-size:1.3rem;color:var(--primary);}
+.t-rec .tl{color:var(--success-dk);}
+.t-rec .ta{font-size:1rem;color:var(--success-dk);}
+.disc-line{display:none;font-size:.78rem;color:var(--success-dk);background:var(--success-dim);padding:7px 12px;border-radius:var(--rx);margin-bottom:8px;}
+.disc-line.show{display:block;}
+.sb-cta{padding:16px 24px;border-top:1px solid var(--border);flex-shrink:0;}
+.btn-p{width:100%;padding:14px;background:linear-gradient(130deg,var(--accent),var(--accent-l));color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;font-weight:700;border:none;border-radius:var(--rs);cursor:pointer;transition:all var(--tr);display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 20px rgba(185,138,86,.33);}
+.btn-p:hover{background:linear-gradient(130deg,#A67743,#C99863);transform:translateY(-1px);box-shadow:0 11px 26px rgba(185,138,86,.38);}
+.btn-s{width:100%;padding:10px;background:transparent;color:var(--text-m);font-family:'Plus Jakarta Sans',sans-serif;font-size:.8rem;font-weight:600;border:1.5px solid var(--border);border-radius:var(--rs);cursor:pointer;margin-top:8px;transition:all var(--tr);}
+.btn-s:hover{border-color:var(--text-d);color:var(--text);}
+
+/* PACKS VIEW */
+#packsView{display:none;padding:40px 36px;animation:fadeUp .25s ease;}
+#packsView.active{display:block;}
+.packs-intro{text-align:center;margin-bottom:48px;max-width:640px;margin-inline:auto;}
+.packs-intro h2{font-family:'Sora',sans-serif;font-size:2rem;font-weight:700;color:var(--primary);margin-bottom:10px;}
+.packs-intro p{color:var(--text-m);font-size:.95rem;line-height:1.7;}
+.hl{color:var(--accent);font-weight:700;}
+.packs-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:1300px;margin:0 auto;}
+.pack{background:#fff;border:1.5px solid var(--border);border-radius:var(--r);display:flex;flex-direction:column;overflow:hidden;transition:transform .2s,border-color .2s,box-shadow .2s;position:relative;}
+.pack:hover{transform:translateY(-5px);border-color:var(--primary-dim);box-shadow:var(--shadow-lg);}
+.pack.feat{border-color:var(--primary);box-shadow:0 0 0 2px rgba(31,62,82,.15),var(--shadow);}
+.ribbon{position:absolute;top:14px;right:-1px;color:#fff;font-size:.65rem;font-weight:700;padding:4px 14px 4px 10px;border-radius:4px 0 0 4px;letter-spacing:.05em;text-transform:uppercase;}
+.ribbon.blue{background:var(--primary);}
+.ribbon.orange{background:#A67743;}
+.pack-hd{padding:24px 22px 18px;border-bottom:1px solid var(--border);}
+.pack-icon{font-size:2rem;margin-bottom:10px;}
+.pack-name{font-family:'Sora',sans-serif;font-size:1.05rem;font-weight:700;margin-bottom:4px;}
+.pack-short{font-size:.8rem;color:var(--text-m);line-height:1.5;}
+.pack-detail{display:none;font-size:.78rem;color:var(--text-m);margin-top:10px;line-height:1.6;border-top:1px dashed var(--border);padding-top:10px;}
+.pack-detail.open{display:block;}
+.pread{background:none;border:none;cursor:pointer;color:var(--primary);font-size:.74rem;font-weight:600;margin-top:6px;display:inline-flex;align-items:center;gap:4px;}
+.pack-pricing{padding:16px 22px;border-bottom:1px solid var(--border);background:var(--bg);}
+.pp-main{font-size:1.4rem;font-weight:800;font-family:'Sora',sans-serif;line-height:1.1;}
+.pp-main span{font-size:.8rem;font-weight:500;color:var(--text-m);}
+.pp-note{font-size:.73rem;color:var(--text-m);margin-top:3px;}
+.pp-rec{margin-top:8px;font-size:.8rem;font-weight:600;color:var(--success-dk);display:flex;align-items:center;gap:5px;}
+.pp-rec span{font-size:.7rem;font-weight:400;color:var(--text-m);}
+.pack-inc{padding:18px 22px;flex:1;}
+.pit{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-d);margin-bottom:10px;}
+.pi{display:flex;align-items:flex-start;gap:8px;font-size:.81rem;color:var(--text-m);margin-bottom:8px;line-height:1.35;}
+.pidot{flex-shrink:0;width:16px;height:16px;border-radius:50%;background:var(--primary-bg);color:var(--primary);font-size:.6rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+.pack.feat .pidot{background:var(--primary);color:#fff;}
+.pack-q{padding:10px 22px;border-top:1px solid var(--border);font-size:.76rem;font-style:italic;color:var(--text-m);background:var(--bg);}
+.pack.feat .pack-q{background:var(--primary-bg);color:var(--primary);}
+.pack-act{padding:16px 22px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px;}
+.btn-pack{padding:12px;border-radius:var(--rs);font-family:'Plus Jakarta Sans',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .2s;border:none;text-align:center;}
+.btn-pack-p{background:linear-gradient(130deg,var(--accent),var(--accent-l));color:#fff;box-shadow:0 8px 20px rgba(185,138,86,.33);}
+.btn-pack-p:hover{background:linear-gradient(130deg,#A67743,#C99863);transform:translateY(-1px);}
+.btn-pack-o{background:transparent;color:var(--primary);border:1.5px solid var(--primary-dim);}
+.btn-pack-o:hover{background:var(--primary-bg);}
+.btn-pack-pdf{width:100%;padding:9px;background:transparent;color:var(--text-m);border:1.5px solid var(--border);border-radius:var(--rs);font-family:'Plus Jakarta Sans',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.btn-pack-pdf:hover{border-color:var(--primary-dim);color:var(--primary);background:var(--primary-bg);}
+.packs-foot{text-align:center;margin-top:40px;font-size:.82rem;color:var(--text-d);}
+.packs-foot a{color:var(--primary);cursor:pointer;font-weight:600;}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--text);color:#fff;padding:12px 24px;border-radius:100px;font-size:.84rem;font-weight:600;box-shadow:0 8px 32px rgba(0,0,0,.2);z-index:9999;display:flex;align-items:center;gap:8px;transition:transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.ok{background:var(--success-dk);}
+.toast.err{background:#D32F2F;}
+
+/* RESPONSIVE */
+@media(max-width:1100px){.packs-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:900px){
+  .wrap{grid-template-columns:1fr;}
+  .form-area{max-height:none;padding:20px;}
+  .sidebar{position:static;border-left:none;border-top:2px solid var(--border);max-height:none;}
+  header{padding:0 20px;}
+  .sol-grid{grid-template-columns:1fr 1fr;}
+  #packsView{padding:24px 20px;}
+}
+@media(max-width:640px){
+  .packs-grid{grid-template-columns:1fr;}
+  .sol-grid{grid-template-columns:1fr;}
+  .frow{grid-template-columns:1fr;}
+  .hbadge{display:none;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HEADER -->
+<header>
+  <div class="logo-area">
+    <div class="logo-mark">SP</div>
+    <div>
+      <div class="logo-name">Sale Pro</div>
+      <span class="logo-tag">Logiciel de gestion boutique &amp; e-commerce</span>
+    </div>
+  </div>
+  <div class="view-toggle" id="vt">
+    <div class="toggle-pill" id="pill"></div>
+    <button class="tbtn active" id="btn-config" onclick="switchView('config')">&#9881; Calculateur</button>
+    <button class="tbtn" id="btn-packs" onclick="switchView('packs')">&#128230; Nos Packs</button>
+  </div>
+  <div class="hbadge">&#10022; Calculateur commercial</div>
+</header>
+
+<!-- FORMULAIRE -->
+<main class="form-area" id="configView">
+  <div class="progress-wrap">
+    <div class="progress-step done" id="p1"></div>
+    <div class="progress-step" id="p2"></div>
+    <div class="progress-step" id="p3"></div>
+    <div class="progress-step" id="p4"></div>
+    <div class="progress-step" id="p5"></div>
+  </div>
+
+  <!-- 0. CLIENT -->
+  <div class="section open" id="sec-client">
+    <div class="sec-hd" onclick="tog('sec-client')">
+      <div class="sec-num">0</div>
+      <div class="sec-title">Informations client</div>
+      <span class="stag stag-r">Requis</span>
+      <span class="sec-chev">&#9660;</span>
+    </div>
+    <div class="sec-body">
+      <div class="logo-up" onclick="document.getElementById('lgf').click()">
+        <input type="file" id="lgf" accept="image/*" onchange="handleLogo(event)"/>
+        <div class="logo-icon">&#128444;</div>
+        <img class="logo-prev" id="lgprev" alt="Logo"/>
+        <div class="logo-txt" id="lgtxt">Cliquer pour ajouter le logo de votre entreprise</div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label>Nom du client / entreprise</label>
+          <input class="tf" id="cName" type="text" placeholder="Ex: Boutique Laafi" oninput="updatePrev()"/></div>
+        <div class="fg"><label>Telephone / Email</label>
+          <input class="tf" id="cContact" type="text" placeholder="Ex: +226 70 00 00 00" oninput="updatePrev()"/></div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label>Adresse</label>
+          <input class="tf" id="cAddr" type="text" placeholder="Ex: Secteur 4, Ouagadougou"/></div>
+        <div class="fg"><label>Secteur d'activite</label>
+          <input class="tf" id="cBiz" type="text" placeholder="Ex: Mode, cosmetique, alimentation"/></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 0B. COMMERCIAL -->
+  <div class="section" id="sec-sales">
+    <div class="sec-hd" onclick="tog('sec-sales')">
+      <div class="sec-num">0B</div>
+      <div class="sec-title">Contact commercial</div>
+      <span class="stag stag-r">Requis</span>
+      <span class="sec-chev">&#9660;</span>
+    </div>
+    <div class="sec-body">
+      <div class="frow">
+        <div class="fg"><label>Nom du commercial</label>
+          <input class="tf" id="sName" type="text" placeholder="Ex: Louis Bertson"/></div>
+        <div class="fg"><label>Telephone commercial</label>
+          <input class="tf" id="sPhone" type="text" placeholder="Ex: +226 56 92 06 71"/></div>
+      </div>
+      <div class="frow full">
+        <div class="fg"><label>Email commercial</label>
+          <input class="tf" id="sEmail" type="email" placeholder="Ex: commercial@salepro.com"/></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1. TYPE -->
+  <div class="section" id="sec-type">
+    <div class="sec-hd" onclick="tog('sec-type')">
+      <div class="sec-num">1</div>
+      <div class="sec-title">Type de solution</div>
+      <span class="stag stag-r">Requis</span>
+      <span class="sec-chev">&#9660;</span>
+    </div>
+    <div class="sec-body">
+      <div class="info-ban">
+        <span>&#128161;</span>
+        <span>Chaque option inclut automatiquement <strong>Sale Pro + Installation + Formation + Suivi 3 mois</strong> a 125 000 FCFA.</span>
+      </div>
+      <div class="sol-grid">
+        <div class="sol-card" onclick="selSol('local')" id="sol-local">
+          <div class="sol-icon">&#127978;</div>
+          <div class="sol-name">Gestion en locale</div>
+          <div class="sol-sub">Boutique physique uniquement</div>
+        </div>
+        <div class="sol-card" onclick="selSol('local_ecom')" id="sol-local_ecom">
+          <div class="sol-icon">&#127978;&#127760;</div>
+          <div class="sol-name">Locale + E-commerce</div>
+          <div class="sol-sub">Boutique physique + vente en ligne</div>
+        </div>
+        <div class="sol-card" onclick="selSol('ecommerce')" id="sol-ecommerce">
+          <div class="sol-icon">&#127760;</div>
+          <div class="sol-name">E-commerce uniquement</div>
+          <div class="sol-sub">Vente 100% en ligne</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. LOGICIEL SALE PRO -->
+  <div class="section" id="sec-logiciel">
+    <div class="sec-hd" onclick="tog('sec-logiciel')">
+      <div class="sec-num">2</div>
+      <div class="sec-title">Logiciel Sale Pro</div>
+      <span class="stag stag-g">Toujours inclus</span>
+      <span class="sec-chev">&#9660;</span>
+    </div>
+    <div class="sec-body">
+      <!-- Forfait fixe -->
+      <div class="cc sel" style="pointer-events:none;margin-bottom:16px;">
+        <div class="ccheck" style="background:var(--primary);border-color:var(--primary);position:relative;"><span style="position:absolute;left:3px;top:0;color:#fff;font-size:10px;font-weight:900;">&#10003;</span></div>
+        <div class="cbody">
+          <div class="cname">Sale Pro — Installation + Formation + Suivi 3 mois</div>
+          <div class="cshort">Le logiciel installe chez vous, votre equipe formee, 3 mois de support WhatsApp inclus. Prix fixe, non-negociable.</div>
+          <button class="rmore" onclick="tread(this,event)">En savoir plus <span class="rarr">&#9660;</span></button>
+          <div class="cdetail">
+            <strong>Ce qui est compris :</strong><br/><br/>
+            Logiciel Sale Pro installe sur votre poste — Parametrage complet : produits, categories, utilisateurs, caisse — Formation de votre equipe (2h minimum, sur site) — 3 mois de suivi et assistance WhatsApp prioritaire — Mises a jour logiciel pendant la periode active.<br/><br/>
+            <em>Ce forfait est non-negociable : il garantit que votre systeme fonctionne parfaitement des le premier jour et que vos vendeurs sont a l'aise.</em>
+          </div>
+        </div>
+        <div class="cright">
+          <div class="cprice">125 000 FCFA</div>
+          <div class="badge-o">Ponctuel</div>
+        </div>
+      </div>
+
+      <!-- Licence question -->
+      <div class="lic-wrap">
+        <div class="lic-info">
+          <div class="lic-label">Souhaitez-vous une licence annuelle de maintenance ?</div>
+          <div class="lic-sub">Choix: Licence annuelle ou Utilisation a vie.</div>
+        </div>
+        <div class="choice-group" style="margin-top:12px;">
+          <div class="cc sel" onclick="setLic(true,this)">
+            <input type="radio" name="lic" value="yes" class="cradio" checked/>
+            <div class="cbody">
+              <div class="cname">Oui, je choisis la licence annuelle</div>
+              <div class="cshort">Licence annuelle</div>
+            </div>
+          </div>
+          <div class="cc" onclick="setLic(false,this)">
+            <input type="radio" name="lic" value="no" class="cradio"/>
+            <div class="cbody">
+              <div class="cname">Non, je prefere la licence a vie</div>
+              <div class="cshort">Utilisation a vie</div>
+            </div>
+          </div>
+        </div>
+        <div class="lic-impact lic-on" id="licImp">
+          Licence annuelle
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. MATERIEL -->
+  <div class="section" id="sec-mat" style="display:none">
+    <div class="sec-hd" onclick="tog('sec-mat')">
+      <div class="sec-num">3</div>
+      <div class="sec-title">Materiel caisse</div>
+      <span class="stag stag-r">Gestion locale</span>
+      <span class="sec-chev">&#9660;</span>
+    </div>
+    <div class="sec-body">
+      <!-- PC -->
+      <div class="subsec" style="margin-top:0;">
+        <div class="subsec-t">&#128187; Poste de travail</div>
+        <div class="choice-group" id="pc-g">
+          <div class="cc sel" onclick="selPC('aucun',this)">
+            <input type="radio" name="pc" value="aucun" class="cradio" checked/>
+            <div class="cbody">
+              <div class="cname">J'ai deja un ordinateur</div>
+              <div class="cshort">Sale Pro s'installe sur votre PC existant (Windows 7+, 4 Go RAM minimum).</div>
+            </div>
+            <div class="cright"><div class="cprice">—</div></div>
+          </div>
+          <div class="cc" onclick="selPC('simple',this)">
+            <input type="radio" name="pc" value="simple" class="cradio"/>
+            <div class="cbody">
+              <div class="cname">PC de caisse simple</div>
+              <div class="cshort">Configuration optimisee pour Sale Pro. Fiable et rapide, concu pour tenir 5 ans.</div>
+              <button class="rmore" onclick="tread(this,event)">En savoir plus <span class="rarr">&#9660;</span></button>
+              <div class="cdetail">PC compact Windows 11, 8 Go RAM, SSD 256 Go. Concu pour une utilisation en caisse 8h/jour sans ralentissement. Livraison et installation incluses dans le forfait Sale Pro. Economique et robuste.</div>
+            </div>
+            <div class="cright"><div class="cprice">85 000 FCFA</div><div class="badge-o">Ponctuel</div></div>
+          </div>
+          <div class="cc" onclick="selPC('premium',this)">
+            <input type="radio" name="pc" value="premium" class="cradio"/>
+            <div class="cbody">
+              <div class="cname">All-in-One Premium — Ecran tactile</div>
+              <div class="cshort">Ecran tactile integre, design pro, aucun cable visible. Une caisse qui impressionne vos clients.</div>
+              <button class="rmore" onclick="tread(this,event)">En savoir plus <span class="rarr">&#9660;</span></button>
+              <div class="cdetail">Tout-en-un 21.5" tactile, Windows 11, 16 Go RAM, SSD 512 Go. Zero cable sur le comptoir. Parfait pour les boutiques premium : vetements, cosmetiques, hi-tech. L'ecran tactile accelere la saisie et fait une vraie difference a l'accueil clients.</div>
+            </div>
+            <div class="cright"><div class="cprice">200 000 FCFA</div><div class="badge-o">Ponctuel</div></div>
+          </div>
+        </div>
+      </div>
+      <!-- Accessoires -->
+      <div class="subsec">
+        <div class="subsec-t">&#128230; Accessoires caisse</div>
+        <div class="choice-group" id="acc-g">
+          <div class="cc" onclick="togPack()" id="c-pack">
+            <input type="checkbox" id="a-pack" class="ccheck"/>
+            <div class="cbody">
+              <div class="cname">&#127873; Pack complet accessoires</div>
+              <div class="cshort">Imprimante + Scanner. Tout pour une caisse professionnelle.</div>
+              <button class="rmore" onclick="tread(this,event)">En savoir plus <span class="rarr">&#9660;</span></button>
+              <div class="cdetail">Ce pack regroupe les accessoires essentiels. Scanner : lecture des codes-barres en 1 seconde. Imprimante thermique : tickets de caisse sans encre. Offre avantageuse vs achat separe.</div>
+            </div>
+            <div class="cright"><div class="cprice">85 000 FCFA</div><div class="badge-o">Ponctuel</div></div>
+          </div>
+          <div class="cc" id="c-scan" onclick="togAcc('a-scan',this)">
+            <input type="checkbox" id="a-scan" class="ccheck"/>
+            <div class="cbody">
+              <div class="cname">Scanner code-barres</div>
+              <div class="cshort">Scannez vos produits en moins d'une seconde. Zero erreur de saisie.</div>
+            </div>
+            <div class="cright"><div class="cprice">25 000 FCFA</div></div>
+          </div>
+          <div class="cc" id="c-print" onclick="togAcc('a-print',this)">
+            <input type="checkbox" id="a-print" class="ccheck"/>
+            <div class="cbody">
+              <div class="cname">Imprimante de caisse thermique</div>
+              <div class="cshort">Tickets en 2 secondes, sans encre, sans cartouche. Silencieuse et compacte.</div>
+            </div>
+            <div class="cright"><div class="cprice">75 000 FCFA</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. SITE WEB -->
+  <div class="section" id="sec-web" style="display:none">
+    <div class="sec-hd" onclick="tog('sec-web')">
+      <div class="sec-num">4</div>
+      <div class="sec-title">Site E-commerce</div>
+      <span class="stag stag-r">Activé</span>
+      <span class="sec-chev">&#9660;</span>
+    </div>
+    <div class="sec-body">
+      <div class="info-ban">
+        <span>&#127760;</span>
+        <span>Votre boutique en ligne <strong>synchronisee avec Sale Pro</strong>. Les stocks se mettent a jour automatiquement : une vente en boutique = stock reduit sur le site.</span>
+      </div>
+      <div class="choice-group">
+        <div class="cc sel" style="pointer-events:none;">
+          <div class="ccheck" style="background:var(--primary);border-color:var(--primary);position:relative;"><span style="position:absolute;left:3px;top:0;color:#fff;font-size:10px;font-weight:900;">&#10003;</span></div>
+          <div class="cbody">
+            <div class="cname">Conception du site e-commerce sur mesure</div>
+            <div class="cshort">Design personnalise, catalogue produits, tunnel d'achat, panneau d'administration, livraison en 15 jours.</div>
+            <button class="rmore" onclick="tread(this,event)">En savoir plus <span class="rarr">&#9660;</span></button>
+            <div class="cdetail">Votre site livre en 15 jours ouvres depuis zero. Design adapte a votre activite, catalogue produits avec photos, integration paiement Orange Money / Moov / Wave, espace admin depuis votre telephone. Synchronise avec Sale Pro : pas de double saisie de stock.</div>
+          </div>
+          <div class="cright"><div class="cprice">30 000 FCFA</div><div class="badge-o">Ponctuel</div></div>
+        </div>
+        <div class="cc" id="c-pay" onclick="togAcc('a-pay',this)">
+          <input type="checkbox" id="a-pay" class="ccheck"/>
+          <div class="cbody">
+            <div class="cname">Integration des moyens de paiement en ligne</div>
+            <div class="cshort">Ajout des paiements en ligne (mobile money/carte) sur le site.</div>
+          </div>
+          <div class="cright"><div class="cprice">25 000 FCFA</div><div class="badge-o">Ponctuel</div></div>
+        </div>
+        <div class="cc sel" style="pointer-events:none;">
+          <div class="ccheck" style="background:var(--primary);border-color:var(--primary);position:relative;"><span style="position:absolute;left:3px;top:0;color:#fff;font-size:10px;font-weight:900;">&#10003;</span></div>
+          <div class="cbody">
+            <div class="cname">Hebergement serveur securise SSL</div>
+            <div class="cshort">Serveur rapide, certificat SSL, sauvegardes automatiques quotidiennes.</div>
+          </div>
+          <div class="cright"><div class="cprice">55 000 FCFA</div><div class="badge-r">/an</div></div>
+        </div>
+        <div class="cc sel" style="pointer-events:none;">
+          <div class="ccheck" style="background:var(--primary);border-color:var(--primary);position:relative;"><span style="position:absolute;left:3px;top:0;color:#fff;font-size:10px;font-weight:900;">&#10003;</span></div>
+          <div class="cbody">
+            <div class="cname">Nom de domaine personnalise</div>
+            <div class="cshort">votreboutique.com / .bf / .shop — votre adresse web professionnelle.</div>
+          </div>
+          <div class="cright"><div class="cprice">15 000 FCFA</div><div class="badge-r">/an</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:60px;"></div>
+</main>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sideEl">
+  <div class="sb-top"><div class="sb-title">Recapitulatif du devis</div><div class="sb-sub">Mis a jour en temps reel</div></div>
+  <div class="sb-meta">
+    <div class="qrow"><span>N devis</span><span id="qNum">—</span></div>
+    <div class="qrow"><span>Date</span><span id="qDate">—</span></div>
+  </div>
+  <div class="sb-client">
+    <div class="cprev-n" id="pName">Client non renseigne</div>
+    <div class="cprev-d" id="pContact">Remplissez les informations client</div>
+  </div>
+  <div class="sb-admin">
+    <button class="adm-btn" onclick="togAdm()">&#9881; Options commerciales</button>
+    <div class="adm-panel" id="admP">
+      <div class="disc-row">
+        <label>Remise commerciale</label>
+        <input class="disc-inp" type="number" id="discInp" min="0" max="100" value="0" oninput="updSum()"/>
+        <span style="font-size:.8rem;color:var(--text-m);">%</span>
+      </div>
+    </div>
+  </div>
+  <div class="line-items" id="lines">
+    <div class="empty" id="empt"><div class="empty-ico">&#128203;</div>Selectionnez un type de solution<br/>pour voir le detail ici</div>
+  </div>
+  <div class="totals">
+    <div class="disc-line" id="dline"></div>
+    <div class="trow t-main"><div class="tl">Total initial HT</div><div class="ta" id="tInit">0 FCFA</div></div>
+    <div class="trow"><div class="tl">Grand total (du aujourd'hui)</div><div class="ta" id="tGrand">0 FCFA</div></div>
+    <div class="trow t-rec" style="margin-top:8px;"><div class="tl">Renouvellement annuel</div><div class="ta" id="tAnn">0 FCFA par an</div></div>
+  </div>
+  <div class="sb-cta">
+    <button class="btn-p" onclick="genPDF()">&#128196; Generer le devis PDF</button>
+    <button class="btn-s" onclick="saveAndShare()">&#128279; Partager le devis</button>
+    <button class="btn-s" onclick="openQuotePrompt()">&#128194; Ouvrir un devis</button>
+    <button class="btn-s" onclick="contactWhatsApp()">WhatsApp: +22656920671</button>
+    <button class="btn-s" onclick="resetAll()">&#8635; Reinitialiser</button>
+  </div>
+</aside>
+
+<!-- PACKS VIEW -->
+<div id="packsView" style="grid-column:1/-1;">
+  <div class="packs-intro">
+    <h2>4 Packs cles en main</h2>
+    <p>Chaque pack inclut <span class="hl">Sale Pro + Installation + Formation + Suivi 3 mois</span>. Vous savez exactement ce que vous payez avant meme de nous appeler.</p>
+  </div>
+  <div class="lic-wrap" style="max-width:860px;margin:0 auto 26px;">
+    <div class="lic-label" style="margin-bottom:10px;">Choix de licence (applique a tous les packs)</div>
+    <div class="choice-group">
+      <div class="cc sel" onclick="setPackLicMode('annual',this)">
+        <input type="radio" name="packLic" value="annual" class="cradio" checked/>
+        <div class="cbody"><div class="cname">Licence annuelle</div></div>
+      </div>
+      <div class="cc" onclick="setPackLicMode('lifetime',this)">
+        <input type="radio" name="packLic" value="lifetime" class="cradio"/>
+        <div class="cbody"><div class="cname">Utilisation a vie (+150 000 FCFA)</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="packs-grid">
+
+    <!-- PACK 1 -->
+    <div class="pack" data-pack="local_essentiel">
+      <div class="pack-hd">
+        <div class="pack-icon">&#127978;</div>
+        <div class="pack-name">Pack Local Essentiel</div>
+        <div class="pack-short">Demarrage parfait pour une petite boutique. Logiciel + imprimante de caisse sur votre PC existant ou un PC simple. Prix accessible, efficacite immediate.</div>
+        <button class="pread" onclick="ptread(this)">Lire plus &#9660;</button>
+        <div class="pack-detail">Ce pack s'adresse aux commercants qui demarrent ou qui ont deja un ordinateur. Sale Pro complet avec gestion des stocks, ventes, clients et impression des tickets de caisse. Formation de votre equipe incluse — operationnel des le premier jour. Ajoutez l'imprimante thermique pour professionnaliser votre accueil.</div>
+      </div>
+      <div class="pack-pricing">
+        <div class="pp-main" id="pmain-local_essentiel">285 000 <span>FCFA</span></div>
+        <div class="pp-note">Total initial — tout inclus</div>
+        <div class="pp-rec" id="prec-local_essentiel">+ 30 000 FCFA <span>par an</span></div>
+      </div>
+      <div class="pack-inc">
+        <div class="pit">Inclus dans ce pack</div>
+        <div class="pi"><div class="pidot">&#10003;</div>Sale Pro + Installation + Formation + Suivi 3 mois</div>
+        <div class="pi"><div class="pidot">&#10003;</div>PC de caisse simple</div>
+        <div class="pi"><div class="pidot">&#10003;</div>Imprimante de caisse thermique</div>
+        <div class="pi"><div class="pidot">&#10003;</div>Gestion stocks, ventes, caisse, clients</div>
+        <div class="pi"><div class="pidot">&#10003;</div>Licence annuelle renouvelable incluse</div>
+      </div>
+      <div class="pack-q">&#128172; "Pour la boutique qui veut se professionnaliser sans investir massivement."</div>
+      <div class="pack-act">
+        <button class="btn-pack btn-pack-o" onclick="loadPack('local_essentiel')">Personnaliser &#8594;</button>
+        <button class="btn-pack-pdf" onclick="genPkPDF('local_essentiel')">&#128196; Generer ce devis</button>
+      </div>
+    </div>
+
+    <!-- PACK 2 -->
+    <div class="pack" data-pack="local_pro">
+      <div class="pack-hd">
+        <div class="pack-icon">&#128188;</div>
+        <div class="pack-name">Pack Local Pro</div>
+        <div class="pack-short">Caisse complete, ecran tactile, tous les accessoires. Une boutique qui inspire confiance et qui sert vite. Zero compromis sur la qualite.</div>
+        <button class="pread" onclick="ptread(this)">Lire plus &#9660;</button>
+        <div class="pack-detail">Pour les boutiques qui veulent une caisse haut de gamme. L'All-in-One Premium avec ecran tactile donne une image premium. Avec le pack complet d'accessoires (scanner, imprimante), vous accueillez vos clients rapidement, sans erreur. La formation sur site garantit que votre equipe maitrise tout le logiciel des le lendemain.</div>
+      </div>
+      <div class="pack-pricing">
+        <div class="pp-main" id="pmain-local_pro">410 000 <span>FCFA</span></div>
+        <div class="pp-note">Total initial — tout inclus</div>
+        <div class="pp-rec" id="prec-local_pro">+ 30 000 FCFA <span>par an</span></div>
+      </div>
+      <div class="pack-inc">
+        <div class="pit">Inclus dans ce pack</div>
+        <div class="pi"><div class="pidot">&#10003;</div>Sale Pro + Installation + Formation + Suivi 3 mois</div>
+        <div class="pi"><div class="pidot">&#10003;</div>All-in-One Premium — ecran tactile 21.5"</div>
+        <div class="pi"><div class="pidot">&#10003;</div>Pack accessoires : imprimante + scanner</div>
+        <div class="pi"><div class="pidot">&#10003;</div>Gestion avancee : multi-utilisateurs, rapports</div>
+        <div class="pi"><div class="pidot">&#10003;</div>Licence annuelle renouvelable incluse</div>
+      </div>
+      <div class="pack-q">&#128172; "L'option premium pour les boutiques qui recoivent beaucoup de clients par jour."</div>
+      <div class="pack-act">
+        <button class="btn-pack btn-pack-o" onclick="loadPack('local_pro')">Personnaliser &#8594;</button>
+        <button class="btn-pack-pdf" onclick="genPkPDF('local_pro')">&#128196; Generer ce devis</button>
+      </div>
+    </div>
+
+    <!-- PACK 3 -->
+    <div class="pack feat" data-pack="digital">
+      <div class="ribbon blue">Le + demande</div>
+      <div class="pack-hd">
+        <div class="pack-icon">&#127760;</div>
+        <div class="pack-name">Pack Digital</div>
+        <div class="pack-short">Votre boutique en ligne, ouverte 24h/24. Vos clients commandent depuis leur telephone et paient par Orange Money ou Moov. Vous gerez tout depuis Sale Pro.</div>
+        <button class="pread" onclick="ptread(this)">Lire plus &#9660;</button>
+        <div class="pack-detail">Ideal pour les commercants qui ont deja du materiel mais veulent toucher plus de clients en ligne. Sale Pro synchronise automatiquement vos stocks avec votre site. Quand vous vendez en boutique, le stock se met a jour en ligne. Vos clients peuvent commander a 22h depuis Bobo-Dioulasso. Vous recevez la notification et preparez la livraison. Plus de limite geographique.</div>
+      </div>
+      <div class="pack-pricing">
+        <div class="pp-main" id="pmain-digital">155 000 <span>FCFA</span></div>
+        <div class="pp-note">Total initial — tout inclus</div>
+        <div class="pp-rec" id="prec-digital">+ 100 000 FCFA <span>par an</span></div>
+      </div>
+      <div class="pack-inc">
+        <div class="pit">Inclus dans ce pack</div>
+        <div class="pi"><div class="pidot">&#10003;</div>Sale Pro + Installation + Formation + Suivi 3 mois</div>
+        <div class="pi"><div class="pidot">&#10003;</div>Site e-commerce sur mesure livre en 15 jours</div>
+        <div class="pi"><div class="pidot">&#10003;</div>Paiement Orange Money, Moov Money, Wave</div>
+        <div class="pi"><div class="pidot">&#10003;</div>Hebergement SSL + Nom de domaine inclus</div>
+        <div class="pi"><div class="pidot">&#10003;</div>Synchronisation stocks Sale Pro avec le site web</div>
+        <div class="pi"><div class="pidot">&#10003;</div>Licence annuelle renouvelable incluse</div>
+      </div>
+      <div class="pack-q">&#128172; "Nos clients e-commerce voient leurs ventes augmenter des le premier mois."</div>
+      <div class="pack-act">
+        <button class="btn-pack btn-pack-p" onclick="loadPack('digital')">Choisir ce pack</button>
+        <button class="btn-pack-pdf" onclick="genPkPDF('digital')">&#128196; Generer ce devis</button>
+      </div>
+    </div>
+
+    <!-- PACK 4 -->
+    <div class="pack" data-pack="complet_pro">
+      <div class="ribbon orange">Meilleur ROI</div>
+      <div class="pack-hd">
+        <div class="pack-icon">&#128640;</div>
+        <div class="pack-name">Pack Complet Pro</div>
+        <div class="pack-short">Le tout-en-un : boutique physique haut de gamme + site e-commerce. Un seul investissement, une boutique imbattable.</div>
+        <button class="pread" onclick="ptread(this)">Lire plus &#9660;</button>
+        <div class="pack-detail">La solution pour les commercants ambitieux qui veulent dominer leur marche local et digital. Votre caisse avec ecran tactile accueille vos clients pendant que votre site prend des commandes en ligne. Le stock est unique, gere depuis Sale Pro, synchronise partout. Le meilleur investissement sur la duree.</div>
+      </div>
+      <div class="pack-pricing">
+        <div class="pp-main" id="pmain-complet_pro">440 000 <span>FCFA</span></div>
+        <div class="pp-note">Tout inclus</div>
+        <div class="pp-rec" id="prec-complet_pro">+ 100 000 FCFA <span>par an</span></div>
+      </div>
+      <div class="pack-inc">
+        <div class="pit">Inclus dans ce pack</div>
+        <div class="pi"><div class="pidot">&#10003;</div>Sale Pro + Installation + Formation + Suivi 3 mois</div>
+        <div class="pi"><div class="pidot">&#10003;</div>All-in-One Premium ecran tactile</div>
+        <div class="pi"><div class="pidot">&#10003;</div>Pack accessoires complet (imprimante + scanner)</div>
+        <div class="pi"><div class="pidot">&#10003;</div>Site e-commerce complet synchronise</div>
+        <div class="pi"><div class="pidot">&#10003;</div>Hebergement SSL + Domaine inclus</div>
+        <div class="pi"><div class="pidot">&#10003;</div>Choix licence annuelle ou utilisation a vie</div>
+      </div>
+      <div class="pack-q">&#128172; "Pour la boutique qui veut etre numero 1 dans son secteur."</div>
+      <div class="pack-act">
+        <button class="btn-pack btn-pack-o" onclick="loadPack('complet_pro')">Personnaliser &#8594;</button>
+        <button class="btn-pack-pdf" onclick="genPkPDF('complet_pro')">&#128196; Generer ce devis</button>
+      </div>
+    </div>
+
+  </div>
+  <div class="packs-foot">Besoin d'une configuration speciale ? <a onclick="switchView('config')">Utilisez le calculateur avance &#8594;</a></div>
+</div>
+
+</div><!-- /wrap -->
+<div class="toast" id="toast"><span id="tIcon">&#10003;</span> <span id="tMsg">OK</span></div>
+
+<script>
+/* ─── PRICING ──────────────────────────────── */
+const P = {
+  base:125000, lic_ann:30000, lic_life:150000,
+  pc_s:85000, pc_p:200000,
+  pack_a:85000, scan:25000, imp:75000,
+  site:30000, pay:25000, heb:55000, dom:15000,
+};
+
+/* ─── STATE ────────────────────────────────── */
+let S = {
+  sol:null, pc:'aucun',
+  pack_a:false, scan:false, imp:false,
+  lic:true, site:false, pay:false, heb:false, dom:false,
+  disc:0, logo:null,
+};
+let PACK_LIC_MODE = 'annual';
+
+let QID  = 'DV-' + Date.now().toString(36).toUpperCase();
+const QDTE = new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
+
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('qNum').textContent = QID;
+  document.getElementById('qDate').textContent = QDTE;
+  switchView('config');
+  updSum(); initPill(); updPackCards();
+  loadQuoteFromURL();
+});
+window.addEventListener('resize', initPill);
+
+/* ─── SECTIONS ─────────────────────────────── */
+function tog(id){ document.getElementById(id).classList.toggle('open'); }
+function opn(id){ document.getElementById(id).classList.add('open'); }
+
+/* ─── READ MORE ─────────────────────────────── */
+function tread(btn,e){
+  if(e) e.stopPropagation();
+  const d = btn.nextElementSibling;
+  const o = d.classList.toggle('open');
+  btn.innerHTML=(o?'Reduire &#9650;':'En savoir plus &#9660;');
+}
+function ptread(btn){
+  const d = btn.nextElementSibling;
+  const o = d.classList.toggle('open');
+  btn.innerHTML=(o?'Reduire &#9650;':'Lire plus &#9660;');
+}
+
+/* ─── SOLUTION ──────────────────────────────── */
+function selSol(t){
+  S.sol=t;
+  document.querySelectorAll('.sol-card').forEach(c=>c.classList.remove('sel'));
+  document.getElementById('sol-'+t).classList.add('sel');
+  const hasL = t==='local'||t==='local_ecom';
+  const hasW = t==='local_ecom'||t==='ecommerce';
+  show('sec-mat',hasL); show('sec-web',hasW);
+  S.site=hasW; S.heb=hasW; S.dom=hasW;
+  if(!hasW){
+    S.pay=false;
+    const payInput=document.getElementById('a-pay');
+    const payCard=document.getElementById('c-pay');
+    if(payInput) payInput.checked=false;
+    if(payCard) payCard.classList.remove('sel');
+  }
+  if(hasL) opn('sec-mat');
+  if(hasW) opn('sec-web');
+  opn('sec-logiciel');
+  updSum(); updProg();
+}
+function show(id,v){ document.getElementById(id).style.display=v?'block':'none'; }
+
+/* ─── LICENCE ───────────────────────────────── */
+function setLic(val,card){
+  const group=card.parentElement;
+  group.querySelectorAll('.cc').forEach(c=>{
+    c.classList.remove('sel');
+    const r=c.querySelector('.cradio'); if(r) r.checked=false;
+  });
+  card.classList.add('sel');
+  card.querySelector('.cradio').checked=true;
+  S.lic = !!val;
+  const el = document.getElementById('licImp');
+  if(S.lic){
+    el.className='lic-impact lic-on';
+    el.textContent='Licence annuelle';
+  } else {
+    el.className='lic-impact lic-off';
+    el.textContent='Utilisation a vie';
+  }
+  updSum();
+}
+
+/* ─── PC RADIO ───────────────────────────────── */
+function selPC(v,card){
+  document.getElementById('pc-g').querySelectorAll('.cc').forEach(c=>{
+    c.classList.remove('sel');
+    const r=c.querySelector('.cradio'); if(r) r.checked=false;
+  });
+  card.classList.add('sel');
+  card.querySelector('.cradio').checked=true;
+  S.pc=v; updSum();
+}
+
+/* ─── ACCESSOIRES ───────────────────────────── */
+function togPack(){
+  const cb=document.getElementById('a-pack');
+  cb.checked=!cb.checked;
+  document.getElementById('c-pack').classList.toggle('sel',cb.checked);
+  S.pack_a=cb.checked;
+  ['scan','print'].forEach(id=>{
+    const c=document.getElementById('c-'+id);
+    const i=document.getElementById('a-'+id);
+    if(cb.checked){ c.classList.add('dis'); if(i) i.checked=false; }
+    else c.classList.remove('dis');
+  });
+  if(cb.checked){ S.scan=false; S.imp=false; }
+  updSum();
+}
+function togAcc(id,card){
+  if(S.pack_a && (id==='a-scan' || id==='a-print')) return;
+  const cb=document.getElementById(id); cb.checked=!cb.checked;
+  card.classList.toggle('sel',cb.checked);
+  if(id==='a-scan')  S.scan=cb.checked;
+  if(id==='a-print') S.imp=cb.checked;
+  if(id==='a-pay')   S.pay=cb.checked;
+  updSum();
+}
+
+/* ─── LOGO ──────────────────────────────────── */
+function handleLogo(e){
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    S.logo=ev.target.result;
+    const p=document.getElementById('lgprev');
+    p.src=S.logo; p.style.display='block';
+    document.getElementById('lgtxt').style.display='none';
+    document.querySelector('.logo-icon').style.display='none';
+  };
+  r.readAsDataURL(f);
+}
+
+/* ─── PREVIEW ───────────────────────────────── */
+function updatePrev(){
+  const n=document.getElementById('cName').value.trim();
+  const c=document.getElementById('cContact').value.trim();
+  document.getElementById('pName').textContent = n||'Client non renseigne';
+  document.getElementById('pContact').textContent = c||'Remplissez les informations client';
+  updProg();
+}
+
+/* ─── ADMIN ─────────────────────────────────── */
+function togAdm(){ document.getElementById('admP').classList.toggle('open'); }
+
+/* ─── CALCULATE ─────────────────────────────── */
+function calc(){
+  let init=0, ann=0, lines=[];
+  if(!S.sol) return {init,ann,lines};
+
+  init+=P.base;
+  lines.push({n:'Sale Pro - Installation + Formation + Suivi 3 mois',a:P.base,t:'once'});
+
+  if(S.lic){
+    ann+=P.lic_ann;
+    lines.push({n:'Licence annuelle',a:P.lic_ann,t:'annual'});
+  } else {
+    init+=P.lic_life;
+    lines.push({n:'Utilisation a vie',a:P.lic_life,t:'once'});
+  }
+
+  if(S.sol==='local'||S.sol==='local_ecom'){
+    if(S.pc==='simple'){ init+=P.pc_s; lines.push({n:'PC de caisse simple',a:P.pc_s,t:'once'}); }
+    else if(S.pc==='premium'){ init+=P.pc_p; lines.push({n:'All-in-One Premium (tactile)',a:P.pc_p,t:'once'}); }
+    if(S.pack_a){ init+=P.pack_a; lines.push({n:'Pack accessoires complet (imprimante+scanner)',a:P.pack_a,t:'once'}); }
+    else {
+      if(S.scan){ init+=P.scan; lines.push({n:'Scanner code-barres',a:P.scan,t:'once'}); }
+      if(S.imp) { init+=P.imp;  lines.push({n:'Imprimante de caisse thermique',a:P.imp,t:'once'}); }
+    }
+  }
+
+  if(S.site){ init+=P.site; lines.push({n:'Conception site e-commerce sur mesure',a:P.site,t:'once'}); }
+  if(S.pay){ init+=P.pay; lines.push({n:'Integration moyens de paiement en ligne',a:P.pay,t:'once'}); }
+  if(S.heb) { ann+=P.heb;  lines.push({n:'Hebergement serveur SSL',a:P.heb,t:'annual'}); }
+  if(S.dom) { ann+=P.dom;  lines.push({n:'Nom de domaine',a:P.dom,t:'annual'}); }
+
+  return {init,ann,lines};
+}
+
+/* ─── UPDATE SUMMARY ────────────────────────── */
+function updSum(){
+  S.disc = parseFloat(document.getElementById('discInp').value)||0;
+  const {init,ann,lines} = calc();
+  const net = init*(1-S.disc/100);
+  const grand = net + ann;
+  const cont = document.getElementById('lines');
+
+  if(!lines.length){
+    cont.innerHTML='';
+    const e=document.getElementById('empt');
+    e.style.display='block';
+    cont.appendChild(e);
+  } else {
+    cont.innerHTML='';
+    const once=lines.filter(l=>l.t==='once');
+    const rec=lines.filter(l=>l.t==='annual');
+    if(once.length){
+      const s=mkEl('div','lsep'); s.textContent='-- Couts initiaux'; cont.appendChild(s);
+      once.forEach(l=>cont.appendChild(mkLi(l)));
+    }
+    if(rec.length){
+      const s=mkEl('div','lsep'); s.textContent='>> Recurrents annuels'; cont.appendChild(s);
+      rec.forEach(l=>cont.appendChild(mkLi(l)));
+    }
+  }
+
+  document.getElementById('tInit').textContent=fmt(net)+' FCFA';
+  document.getElementById('tGrand').textContent=fmt(grand)+' FCFA';
+  document.getElementById('tAnn').textContent=fmt(ann)+' FCFA par an';
+
+  const dl=document.getElementById('dline');
+  if(S.disc>0&&init>0){
+    dl.textContent='Remise '+S.disc+'% : -'+fmt(init*S.disc/100)+' FCFA';
+    dl.classList.add('show');
+  } else dl.classList.remove('show');
+}
+function mkEl(tag,cls){ const d=document.createElement(tag); if(cls) d.className=cls; return d; }
+function mkLi(item){
+  const d=mkEl('div','li');
+  const tag=item.t==='annual'?'<span class="li-t rec">/an</span>':'<span class="li-t once">x1</span>';
+  d.innerHTML=`<div class="li-n">${item.n}${tag}</div><div class="li-a">${fmt(item.a)}</div>`;
+  return d;
+}
+function fmt(n){
+  const v = Math.round(Number(n) || 0);
+  return v.toString().replace(/\B(?=(\d{3})+(?!\d))/g,' ');
+}
+
+/* ─── PROGRESS ──────────────────────────────── */
+function updProg(){
+  const steps=[
+    !!document.getElementById('cName').value.trim(),
+    !!S.sol,!!S.sol,!!S.sol,!!S.sol
+  ];
+  steps.forEach((d,i)=>document.getElementById('p'+(i+1)).classList.toggle('done',d));
+}
+
+/* ─── RESET ─────────────────────────────────── */
+function resetAll(){ if(!confirm('Tout reinitialiser ?')) return; location.reload(); }
+
+/* ─── VIEW SWITCH ───────────────────────────── */
+let curV='config';
+function switchView(v){
+  curV=v;
+  const cfg=document.getElementById('configView');
+  const sb=document.getElementById('sideEl');
+  const pk=document.getElementById('packsView');
+  const bc=document.getElementById('btn-config');
+  const bp=document.getElementById('btn-packs');
+  const pill=document.getElementById('pill');
+  if(v==='packs'){
+    cfg.style.display='none'; sb.style.display='none';
+    pk.classList.add('active');
+    bc.classList.remove('active'); bp.classList.add('active');
+    pill.style.width=bp.offsetWidth+'px';
+    pill.style.transform='translateX('+bc.offsetWidth+'px)';
+  } else {
+    cfg.style.display=''; sb.style.display='';
+    pk.classList.remove('active');
+    bc.classList.add('active'); bp.classList.remove('active');
+    pill.style.width=bc.offsetWidth+'px';
+    pill.style.transform='translateX(0)';
+  }
+}
+function initPill(){
+  const a=document.querySelector('.tbtn.active');
+  const p=document.getElementById('pill');
+  if(!a||!p) return;
+  p.style.width=a.offsetWidth+'px';
+  p.style.transform='translateX(0)';
+}
+
+/* ─── PACK PRESETS ──────────────────────────── */
+const PKS = {
+  local_essentiel:{
+    name:'Pack Local Essentiel',
+    lines:[
+      {n:'Sale Pro - Installation + Formation + Suivi 3 mois',a:125000,t:'once'},
+      {n:'PC de caisse simple',a:85000,t:'once'},
+      {n:'Imprimante de caisse thermique',a:75000,t:'once'},
+      {n:'Licence annuelle',a:30000,t:'annual',lic:true},
+    ],
+    st:{sol:'local',pc:'simple',pack_a:false,scan:false,imp:true,lic:true,site:false,pay:false,heb:false,dom:false}
+  },
+  local_pro:{
+    name:'Pack Local Pro',
+    lines:[
+      {n:'Sale Pro - Installation + Formation + Suivi 3 mois',a:125000,t:'once'},
+      {n:'All-in-One Premium (ecran tactile)',a:200000,t:'once'},
+      {n:'Pack accessoires (imprimante+scanner)',a:85000,t:'once'},
+      {n:'Licence annuelle',a:30000,t:'annual',lic:true},
+    ],
+    st:{sol:'local',pc:'premium',pack_a:true,scan:false,imp:false,lic:true,site:false,pay:false,heb:false,dom:false}
+  },
+  digital:{
+    name:'Pack Digital',
+    lines:[
+      {n:'Sale Pro - Installation + Formation + Suivi 3 mois',a:125000,t:'once'},
+      {n:'Conception site e-commerce sur mesure',a:30000,t:'once'},
+      {n:'Licence annuelle',a:30000,t:'annual',lic:true},
+      {n:'Hebergement serveur SSL',a:55000,t:'annual'},
+      {n:'Nom de domaine',a:15000,t:'annual'},
+    ],
+    st:{sol:'ecommerce',pc:'aucun',pack_a:false,scan:false,imp:false,lic:true,site:true,pay:false,heb:true,dom:true}
+  },
+  complet_pro:{
+    name:'Pack Complet Pro',
+    lines:[
+      {n:'Sale Pro - Installation + Formation + Suivi 3 mois',a:125000,t:'once'},
+      {n:'All-in-One Premium (ecran tactile)',a:200000,t:'once'},
+      {n:'Pack accessoires (imprimante+scanner)',a:85000,t:'once'},
+      {n:'Conception site e-commerce sur mesure',a:30000,t:'once'},
+      {n:'Hebergement serveur SSL',a:55000,t:'annual'},
+      {n:'Nom de domaine',a:15000,t:'annual'},
+      {n:'Licence annuelle',a:30000,t:'annual',lic:true},
+    ],
+    st:{sol:'local_ecom',pc:'premium',pack_a:true,scan:false,imp:false,lic:true,site:true,pay:false,heb:true,dom:true}
+  }
+};
+
+function computePackQuote(id){
+  const pk=PKS[id];
+  if(!pk) return null;
+  const lines = pk.lines
+    .filter(l => !(l.lic && PACK_LIC_MODE==='lifetime'))
+    .map(l => ({ n:l.n, a:l.a, t:l.t }));
+  if(PACK_LIC_MODE==='lifetime')
+    lines.push({ n:'Utilisation a vie', a:P.lic_life, t:'once' });
+
+  const init=lines.filter(l=>l.t==='once').reduce((a,b)=>a+b.a,0);
+  const ann=lines.filter(l=>l.t==='annual').reduce((a,b)=>a+b.a,0);
+  return { name:pk.name, lines, init, ann };
+}
+
+function updPackCards(){
+  Object.keys(PKS).forEach(id=>{
+    const d=computePackQuote(id);
+    if(!d) return;
+    const m=document.getElementById('pmain-'+id);
+    const r=document.getElementById('prec-'+id);
+    if(m) m.innerHTML=fmt(d.init)+' <span>FCFA</span>';
+    if(r) r.innerHTML='+ '+fmt(d.ann)+' FCFA <span>par an</span>';
+  });
+}
+
+function setPackLicMode(mode,card){
+  PACK_LIC_MODE=mode;
+  const group=card.parentElement;
+  group.querySelectorAll('.cc').forEach(c=>{
+    c.classList.remove('sel');
+    const r=c.querySelector('.cradio'); if(r) r.checked=false;
+  });
+  card.classList.add('sel');
+  card.querySelector('.cradio').checked=true;
+  updPackCards();
+}
+
+// Safety initialization for pack cards on first render
+updPackCards();
+
+function loadPack(id){
+  const pk=PKS[id]; if(!pk) return;
+  const d=computePackQuote(id); if(!d) return;
+  const st={...pk.st, lic: PACK_LIC_MODE !== 'lifetime'};
+  Object.assign(S,st);
+  document.querySelectorAll('.sol-card').forEach(c=>c.classList.remove('sel'));
+  const sc=document.getElementById('sol-'+st.sol); if(sc) sc.classList.add('sel');
+  show('sec-mat',st.sol==='local'||st.sol==='local_ecom');
+  show('sec-web',st.site);
+  syncRads('pc-g','pc',st.pc);
+  const pb=document.getElementById('a-pack');
+  if(pb){ pb.checked=st.pack_a; document.getElementById('c-pack').classList.toggle('sel',st.pack_a); }
+  ['scan','print'].forEach(aid=>{
+    const c=document.getElementById('c-'+aid); const i=document.getElementById('a-'+aid);
+    if(c&&i){ c.classList.toggle('dis',st.pack_a); i.checked=false; c.classList.remove('sel'); }
+  });
+  if(!st.pack_a){
+    setAcc('a-scan','c-scan',st.scan);
+    setAcc('a-print','c-print',st.imp);
+  }
+  const licChoice = document.querySelector(`input[name="lic"][value="${st.lic ? 'yes' : 'no'}"]`);
+  if(licChoice){
+    const licCard = licChoice.closest('.cc');
+    if(licCard) setLic(st.lic, licCard);
+  } else {
+    S.lic = st.lic;
+  }
+  if(st.sol==='local'||st.sol==='local_ecom') opn('sec-mat');
+  if(st.site) opn('sec-web');
+  opn('sec-logiciel');
+  updSum();
+  switchView('config');
+  toast('ok','Pack "'+pk.name+'" charge dans le calculateur');
+}
+function setAcc(iid,cid,v){
+  const i=document.getElementById(iid); const c=document.getElementById(cid);
+  if(i) i.checked=v; if(c) c.classList.toggle('sel',v);
+}
+function syncRads(gid,sk,val){
+  const g=document.getElementById(gid); if(!g) return;
+  g.querySelectorAll('.cc').forEach(c=>{
+    const r=c.querySelector('.cradio'); if(!r) return;
+    const m=r.value===val; r.checked=m; c.classList.toggle('sel',m);
+  });
+}
+
+/* ─── SAFE TEXT (PDF) ───────────────────────── */
+function safe(s){
+  const MAP={'é':'e','è':'e','ê':'e','ë':'e','à':'a','â':'a','ù':'u','û':'u','ü':'u','ô':'o','î':'i','ï':'i','ç':'c','É':'E','È':'E','Ê':'E','À':'A','Â':'A','Î':'I','Ô':'O','Ù':'U','Û':'U','Ç':'C'};
+  return (s||'').replace(/[^\x00-\xFF]/g,c=>MAP[c]||'?');
+}
+
+/* ─── BUILD PDF ─────────────────────────────── */
+function bldPDF(lines,init,ann,disc,lbl){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({unit:'mm',format:'a4'});
+  const W=210,M=18; let y=0;
+  const PRI=[20,20,20],PRI_L=[40,40,40],ACC=[105,105,105],ACC_L=[140,140,140],GRN=[75,75,75],DRK=[25,25,25],GRY=[90,90,90],LGR=[224,224,224],BG=[248,248,248],WHT=[255,255,255],GBG=[244,244,244];
+  const net=init*(1-disc/100);
+
+  // Header
+  doc.setFillColor(...WHT); doc.rect(0,0,W,50,'F');
+  doc.setDrawColor(...LGR); doc.setLineWidth(0.35); doc.line(0,50,W,50);
+
+  if(S.logo&&S.logo.startsWith('data:image')){
+    try{ doc.addImage(S.logo,'PNG',M,10,44,22,'','FAST'); }
+    catch(e){ pdftit(doc,M,DRK,'DEVIS COMMERCIAL'); }
+  } else { pdftit(doc,M,DRK,'DEVIS COMMERCIAL'); }
+
+  doc.setDrawColor(...LGR); doc.setFillColor(...WHT); doc.roundedRect(M+50,14,40,12,2,2,'FD');
+  doc.setTextColor(...DRK); doc.setFontSize(8); doc.setFont('helvetica','bold');
+  doc.text('Sale Pro',M+70,22,{align:'center'});
+
+  doc.setTextColor(...DRK); doc.setFontSize(8.5); doc.setFont('helvetica','normal');
+  doc.text('N  '+QID,W-M,16,{align:'right'});
+  doc.text('Date : '+QDTE,W-M,24,{align:'right'});
+  doc.setTextColor(...GRY); doc.setFontSize(8);
+  doc.text(safe(lbl||'Devis sur mesure'),W-M,32,{align:'right'});
+
+  y=62;
+  const cN=safe(document.getElementById('cName').value||'Client');
+  const cC=safe(document.getElementById('cContact').value||'-');
+  const cA=safe(document.getElementById('cAddr').value||'-');
+  const cB=safe(document.getElementById('cBiz').value||'-');
+  const sN=safe(document.getElementById('sName').value||'-');
+  const sP=safe(document.getElementById('sPhone').value||'-');
+  const sE=safe(document.getElementById('sEmail').value||'-');
+
+  doc.setFillColor(...BG); doc.rect(M,y,84,46,'F');
+  doc.setTextColor(...DRK); doc.setFontSize(6.5); doc.setFont('helvetica','bold');
+  doc.text('CLIENT',M+5,y+7);
+  doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.text(cN,M+5,y+16);
+  doc.setFontSize(8.5); doc.setFont('helvetica','normal'); doc.setTextColor(...GRY);
+  doc.text(cC,M+5,y+24); doc.text(cA,M+5,y+31); doc.text('Activite : '+cB,M+5,y+38);
+
+  doc.setFillColor(...BG); doc.rect(W-M-84,y,84,46,'F');
+  doc.setTextColor(...DRK); doc.setFontSize(6.5); doc.setFont('helvetica','bold');
+  doc.text('COMMERCIAL',W-M-79,y+7);
+  doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.text(sN,W-M-79,y+16);
+  doc.setFontSize(8.5); doc.setFont('helvetica','normal'); doc.setTextColor(...GRY);
+  doc.text('Tel : '+sP,W-M-79,y+24);
+  doc.text('Email : '+sE,W-M-79,y+31);
+  const smap={local:'Gestion locale',local_ecom:'Local + E-commerce',ecommerce:'E-commerce uniquement'};
+  doc.text('Solution : '+safe(lbl||smap[S.sol]||'-'),W-M-79,y+38);
+  y+=58;
+
+  doc.setFillColor(...DRK); doc.rect(M,y,W-2*M,10,'F');
+  doc.setTextColor(...WHT); doc.setFontSize(7.5); doc.setFont('helvetica','bold');
+  doc.text('DESIGNATION',M+5,y+7);
+  doc.text('TYPE',132,y+7,{align:'center'});
+  doc.text('MONTANT (FCFA)',W-M-5,y+7,{align:'right'});
+  y+=13;
+
+  let alt=false;
+  lines.forEach(line=>{
+    if(alt){ doc.setFillColor(...BG); doc.rect(M,y-5,W-2*M,12,'F'); }
+    doc.setTextColor(...DRK); doc.setFontSize(9); doc.setFont('helvetica','normal');
+    doc.text(safe(line.n||line.name),M+5,y+1);
+    doc.setFontSize(7.5); doc.setTextColor(...GRY);
+    doc.text((line.t||line.type)==='annual'?'Annuel':'Ponctuel',132,y+1,{align:'center'});
+    doc.setTextColor(...DRK); doc.setFontSize(9);
+    const amt=(line.a||line.amount); doc.text(amt>0?fmt(amt):'Inclus',W-M-5,y+1,{align:'right'});
+    doc.setDrawColor(...LGR); doc.setLineWidth(0.2); doc.line(M,y+6,W-M,y+6);
+    y+=13; alt=!alt;
+  });
+
+  y+=10;
+  const bH=disc>0?62:50;
+  doc.setFillColor(...BG); doc.rect(W-M-96,y,96,bH,'F');
+  doc.setTextColor(...GRY); doc.setFontSize(8.5); doc.setFont('helvetica','normal');
+  doc.text('Sous-total HT (FCFA)',W-M-91,y+10);
+  doc.setTextColor(...DRK); doc.text(fmt(init),W-M-8,y+10,{align:'right'});
+  let ty=20;
+  if(disc>0){
+    doc.setTextColor(...GRN);
+    doc.text('Remise '+disc+'%',W-M-91,y+ty);
+    doc.text('-'+fmt(init*disc/100),W-M-8,y+ty,{align:'right'});
+    ty+=12;
+  }
+  doc.setFillColor(...ACC); doc.rect(W-M-96,y+ty-2,96,1.5,'F'); ty+=5;
+  doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(...DRK);
+  doc.text('TOTAL INITIAL HT (FCFA)',W-M-91,y+ty+4);
+  doc.setTextColor(...PRI); doc.text(fmt(net),W-M-8,y+ty+4,{align:'right'});
+  doc.setTextColor(...GRY); doc.setFont('helvetica','normal'); doc.setFontSize(8.2);
+  doc.text('Grand total du aujourd\'hui (FCFA)',W-M-91,y+ty+12);
+  doc.setTextColor(...DRK); doc.setFont('helvetica','bold');
+  doc.text(fmt(net+ann),W-M-8,y+ty+12,{align:'right'});
+  y+=bH+10;
+
+  doc.setFillColor(...GBG); doc.rect(W-M-96,y,96,18,'F');
+  doc.setTextColor(...PRI); doc.setFont('helvetica','bold'); doc.setFontSize(9);
+  doc.text('Renouvellement annuel (FCFA)',W-M-91,y+8);
+  doc.text(fmt(ann)+' par an',W-M-8,y+8,{align:'right'});
+  doc.setFont('helvetica','normal'); doc.setFontSize(6.5); doc.setTextColor(...GRY);
+  doc.text('(selon options)',W-M-91,y+14);
+  y+=28;
+
+  doc.setFillColor(...BG); doc.rect(M,y,90,24,'F');
+  doc.setFillColor(...PRI); doc.rect(M,y,3,24,'F');
+  doc.setTextColor(...DRK); doc.setFont('helvetica','bold'); doc.setFontSize(7);
+  doc.text('CONDITIONS GENERALES',M+8,y+7);
+  doc.setFont('helvetica','normal'); doc.setTextColor(...GRY);
+  doc.text('Devis valable 30 jours. Acompte de 50% a la commande.',M+8,y+13);
+  doc.text('TVA non applicable.',M+8,y+19);
+
+  const pH=297;
+  doc.setFillColor(...WHT); doc.rect(0,pH-18,W,18,'F');
+  doc.setDrawColor(...LGR); doc.setLineWidth(0.3); doc.line(0,pH-18,W,pH-18);
+  doc.setTextColor(...DRK); doc.setFont('helvetica','bold'); doc.setFontSize(9);
+  doc.text('Sale Pro',M,pH-10);
+  doc.setTextColor(...GRY); doc.setFont('helvetica','normal'); doc.setFontSize(7);
+  doc.text('Merci pour votre confiance. Ce devis a ete genere avec Sale Pro.',W/2,pH-10,{align:'center'});
+  doc.setTextColor(...DRK); doc.setFontSize(7);
+  doc.text('N  '+QID,W-M,pH-10,{align:'right'});
+
+  return doc;
+}
+function pdftit(doc,M,col,txt){
+  doc.setTextColor(...col); doc.setFontSize(18); doc.setFont('helvetica','bold'); doc.text(txt,M,28);
+}
+
+function quotePayload(){
+  return {
+    ref: QID,
+    createdAt: new Date().toISOString(),
+    client: {
+      name: document.getElementById('cName').value || '',
+      contact: document.getElementById('cContact').value || '',
+      address: document.getElementById('cAddr').value || '',
+      business: document.getElementById('cBiz').value || ''
+    },
+    commercial: {
+      name: document.getElementById('sName').value || '',
+      phone: document.getElementById('sPhone').value || '',
+      email: document.getElementById('sEmail').value || ''
+    },
+    state: S,
+    discount: S.disc,
+    solution: S.sol
+  };
+}
+
+async function saveQuote(){
+  const res = await fetch('/api/quotes/',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(quotePayload())
+  });
+  return res.json();
+}
+
+async function saveAndShare(){
+  try{
+    const out = await saveQuote();
+    if(!out.ok){ toast('err',out.error||'Erreur de sauvegarde'); return; }
+    const link = location.origin + '/salepro/quotation/?ref=' + encodeURIComponent(out.ref);
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      await navigator.clipboard.writeText(link);
+      toast('ok','Lien copie: '+out.ref);
+    } else {
+      prompt('Copiez ce lien de devis', link);
+      toast('ok','Lien de devis genere');
+    }
+  } catch(e){
+    console.error(e);
+    toast('err','Partage impossible');
+  }
+}
+
+function openQuotePrompt(){
+  const ref = prompt('Numero ou lien du devis a ouvrir');
+  if(!ref) return;
+  let clean = ref.trim();
+  if(clean.includes('ref=')){
+    try{
+      const u = new URL(clean);
+      clean = (u.searchParams.get('ref') || clean).trim();
+    } catch(e){}
+  }
+  if(!clean) return;
+  location.href='/salepro/quotation/?ref='+encodeURIComponent(clean);
+}
+
+function contactWhatsApp(){
+  const n='+22656920671';
+  const msg=encodeURIComponent('Bonjour, je souhaite des informations sur mon devis Sale Pro.');
+  window.open('https://wa.me/'+n.replace('+','')+'?text='+msg,'_blank');
+}
+
+async function loadQuoteFromURL(){
+  const q = new URLSearchParams(location.search);
+  const ref = q.get('ref');
+  if(!ref) return;
+  try{
+    const res = await fetch('/api/quotes/?ref='+encodeURIComponent(ref));
+    const out = await res.json();
+    if(!out.ok || !out.data){ toast('err','Devis introuvable'); return; }
+    const d = out.data;
+    QID = d.ref || QID;
+    document.getElementById('qNum').textContent = QID;
+    document.getElementById('qDate').textContent = QDTE;
+
+    const cl=d.client||{}, cm=d.commercial||{};
+    document.getElementById('cName').value = cl.name||'';
+    document.getElementById('cContact').value = cl.contact||'';
+    document.getElementById('cAddr').value = cl.address||'';
+    document.getElementById('cBiz').value = cl.business||'';
+    document.getElementById('sName').value = cm.name||'';
+    document.getElementById('sPhone').value = cm.phone||'';
+    document.getElementById('sEmail').value = cm.email||'';
+
+    Object.assign(S, d.state||{});
+    document.getElementById('discInp').value = (d.discount||0);
+    if(S.sol) selSol(S.sol);
+    syncRads('pc-g','pc',S.pc||'aucun');
+    const pb=document.getElementById('a-pack');
+    if(pb){
+      pb.checked=!!S.pack_a;
+      document.getElementById('c-pack').classList.toggle('sel',!!S.pack_a);
+    }
+    ['scan','print'].forEach(aid=>{
+      const c=document.getElementById('c-'+aid);
+      if(c) c.classList.toggle('dis',!!S.pack_a);
+    });
+    setAcc('a-scan','c-scan',!!S.scan);
+    setAcc('a-print','c-print',!!S.imp);
+    setAcc('a-pay','c-pay',!!S.pay);
+    const licChoice = document.querySelector(`input[name="lic"][value="${S.lic ? 'yes' : 'no'}"]`);
+    if(licChoice){
+      const licCard = licChoice.closest('.cc');
+      if(licCard) setLic(S.lic, licCard);
+    }
+    updatePrev();
+    updSum();
+    toast('ok','Devis charge: '+QID);
+  } catch(e){
+    console.error(e);
+    toast('err','Erreur ouverture devis');
+  }
+}
+
+/* ─── GEN PDF (config) ──────────────────────── */
+async function genPDF(){
+  const {init,ann,lines}=calc();
+  if(!lines.length){ toast('err',"Configurez d'abord une solution"); return; }
+  try{
+    const doc=bldPDF(lines,init,ann,S.disc,null);
+    const cn=document.getElementById('cName').value||'Client';
+    doc.save('SalePro-'+QID+'-'+cn.replace(/\s+/g,'-')+'.pdf');
+    toast('ok','Devis PDF genere avec succes !');
+  } catch(e){ console.error(e); toast('err','Erreur PDF : '+e.message); }
+}
+
+/* ─── GEN PDF (pack) ────────────────────────── */
+async function genPkPDF(id){
+  const d=computePackQuote(id); if(!d) return;
+  try{
+    const doc=bldPDF(d.lines,d.init,d.ann,0,d.name);
+    doc.save('SalePro-'+QID+'-'+d.name.replace(/\s+/g,'-')+'.pdf');
+    toast('ok','Devis "'+d.name+'" genere !');
+  } catch(e){ console.error(e); toast('err','Erreur : '+e.message); }
+}
+
+/* ─── TOAST ─────────────────────────────────── */
+function toast(type,msg){
+  const t=document.getElementById('toast');
+  t.className='toast show '+(type||'');
+  document.getElementById('tMsg').textContent=msg;
+  document.getElementById('tIcon').textContent=type==='ok'?'OK':'!';
+  setTimeout(()=>t.classList.remove('show'),3200);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+{
+  "DV-MM473OA9": {
+    "ref": "DV-MM473OA9",
+    "createdAt": "2026-02-27T01:10:37.018Z",
+    "updatedAt": "2026-02-27T01:10:41.494Z",
+    "client": {
+      "name": "",
+      "contact": "",
+      "address": "",
+      "business": ""
+    },
+    "commercial": {
+      "name": "",
+      "phone": "",
+      "email": ""
+    },
+    "state": {
+      "sol": null,
+      "pc": "aucun",
+      "pack_a": false,
+      "scan": false,
+      "imp": false,
+      "lic": true,
+      "site": false,
+      "pay": false,
+      "heb": false,
+      "dom": false,
+      "disc": 0,
+      "logo": null
+    },
+    "discount": 0,
+    "solution": null
+  }
+}

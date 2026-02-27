@@ -1,0 +1,103 @@
+{
+	"routes": [
+		{
+			"method": "GET",
+			"url": "/"
+		},
+		{
+			"method": "GET",
+			"url": "/about/"
+		},
+		{
+			"method": "GET",
+			"url": "/contact/"
+		},
+		{
+			"method": "GET",
+			"url": "/marketplace/"
+		},
+		{
+			"method": "GET",
+			"url": "/services/software-development/"
+		},
+		{
+			"method": "GET",
+			"url": "/services/websites/"
+		},
+		{
+			"method": "GET",
+			"url": "/services/mobile-apps/"
+		},
+		{
+			"method": "GET",
+			"url": "/services/consulting/"
+		},
+		{
+			"method": "GET",
+			"url": "/salepro/"
+		},
+		{
+			"method": "GET",
+			"url": "/salepro/restaurant/"
+		},
+		{
+			"method": "GET",
+			"url": "/salepro/quotation/"
+		},
+		{
+			"method": "POST",
+			"url": "/api/admin/products/upsert/",
+			"auth": 1
+		},
+		{
+			"method": "POST",
+			"url": "/admin/logout/",
+			"auth": 1
+		},
+		{
+			"method": "POST",
+			"url": "/admin/login/",
+			"auth": 2
+		},
+		{
+			"method": "POST",
+			"url": "/api/quotes/"
+		},
+		{
+			"method": "GET",
+			"url": "/api/quotes/"
+		},
+		{
+			"method": "GET",
+			"url": "/api/products/read/"
+		},
+		{
+			"method": "GET",
+			"url": "/api/products/"
+		},
+		{
+			"method": "GET",
+			"url": "/api/admin/overview/",
+			"auth": 1
+		},
+		{
+			"method": "POST",
+			"url": "/api/waitlist/"
+		},
+		{
+			"method": "GET",
+			"url": "/api/admin/products/",
+			"auth": 1
+		},
+		{
+			"method": "GET",
+			"url": "/admin/*",
+			"auth": 2
+		},
+		{
+			"method": "GET",
+			"url": "/admin/*",
+			"auth": 1
+		}
+	]
+}

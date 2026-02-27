@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/Will-create/salepro-quotation/issues"
   },
-  "homepage": "https://github.com/Will-create/salepro-quotation#readme"
+  "homepage": "https://github.com/Will-create/salepro-quotation#readme",
+  "dependencies": {
+    "total5": "^0.0.15"
+  }
 }

@@ -1,0 +1,83 @@
+<section class="hero-band">
+  <div class="kicker">Suite SalePro</div>
+  <h1 class="h1">SalePro Restaurant</h1>
+  <p class="lead">Module dedie a la restauration: gestion salle, cuisine, tables, commandes et caisse. Le lancement approche.</p>
+  <div class="actions">
+    <a class="btn btn-light" href="/marketplace">Retour au marketplace</a>
+    <a class="btn btn-outline" href="https://wa.me/22656920671" target="_blank" rel="noopener">Discuter sur WhatsApp</a>
+  </div>
+</section>
+
+<section class="section grid-2">
+  <article class="card">
+    <div class="badge">Vient bientot</div>
+    <h3 style="margin-top:10px">Ce que vous aurez avec SalePro Restaurant</h3>
+    <ul style="margin-top:10px;padding-left:18px;display:grid;gap:8px;color:var(--muted);line-height:1.7;">
+      <li>Plan de salle et gestion des tables en temps reel.</li>
+      <li>Flux cuisine et suivi des commandes.</li>
+      <li>Prise de commande par serveur avec caisse integree.</li>
+      <li>Ventes en salle + livraison + commande en ligne.</li>
+      <li>Tableaux de bord et rapports de performance restaurant.</li>
+    </ul>
+    <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:6px">
+      <span class="tag-chip">#restaurant</span>
+      <span class="tag-chip">#kitchen</span>
+      <span class="tag-chip">#tables</span>
+      <span class="tag-chip">#waiter</span>
+      <span class="tag-chip">#pos</span>
+      <span class="tag-chip">#online-order</span>
+    </div>
+  </article>
+
+  <article class="card">
+    <h3>Preinscription prioritaire</h3>
+    <p class="muted" style="margin-top:6px">Laissez vos informations pour etre contacte en priorite au lancement.</p>
+
+    <form id="waitForm" style="margin-top:12px;display:grid;gap:9px">
+      <input id="wName" required placeholder="Nom complet" style="border:1px solid var(--line);border-radius:10px;padding:10px;font-family:inherit"/>
+      <input id="wCompany" placeholder="Nom du restaurant / entreprise" style="border:1px solid var(--line);border-radius:10px;padding:10px;font-family:inherit"/>
+      <input id="wPhone" placeholder="Telephone" style="border:1px solid var(--line);border-radius:10px;padding:10px;font-family:inherit"/>
+      <input id="wEmail" type="email" placeholder="Email" style="border:1px solid var(--line);border-radius:10px;padding:10px;font-family:inherit"/>
+      <textarea id="wNote" rows="3" placeholder="Besoins specifiques (optionnel)" style="border:1px solid var(--line);border-radius:10px;padding:10px;font-family:inherit"></textarea>
+      <button class="btn btn-dark" type="submit">Je me preinscris</button>
+      <div id="wMsg" style="font-size:13px"></div>
+    </form>
+  </article>
+</section>
+
+<script>
+document.getElementById('waitForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const msg = document.getElementById('wMsg');
+  msg.textContent = '';
+
+  const payload = {
+    product: 'salepro-restaurant',
+    name: document.getElementById('wName').value.trim(),
+    company: document.getElementById('wCompany').value.trim(),
+    phone: document.getElementById('wPhone').value.trim(),
+    email: document.getElementById('wEmail').value.trim(),
+    note: document.getElementById('wNote').value.trim()
+  };
+
+  try {
+    const res = await fetch('/api/waitlist/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const out = await res.json();
+    if (!out.ok) {
+      msg.style.color = '#b42318';
+      msg.textContent = out.error || 'Impossible de valider la preinscription';
+      return;
+    }
+    msg.style.color = '#166534';
+    msg.textContent = 'Preinscription enregistree. Merci.';
+    document.getElementById('waitForm').reset();
+  } catch (err) {
+    msg.style.color = '#b42318';
+    msg.textContent = 'Erreur reseau';
+  }
+});
+</script>

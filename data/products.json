@@ -1,0 +1,309 @@
+{
+  "salepro-pos": {
+    "slug": "salepro-pos",
+    "name": "SalePro POS",
+    "short": "Open-source POS, Inventory, HRM et Accounting sous Laravel pour retail, warehouse et enterprise.",
+    "heroTitle": "SalePro POS - Laravel-Based Inventory & Point of Sale System",
+    "heroSubtitle": "SalePro POS est une solution open-source complete pour gerer stock, ventes, achats, paiements, RH, clients et comptabilite depuis n'importe ou.",
+    "badges": [
+      "Self-hosted",
+      "Full source code",
+      "Lifetime free updates",
+      "Online / Offline"
+    ],
+    "images": {
+      "hero": "https://picsum.photos/id/180/1400/820",
+      "pos": "https://picsum.photos/id/0/1200/760",
+      "inventory": "https://picsum.photos/id/3/1200/760",
+      "reporting": "https://picsum.photos/id/20/1200/760"
+    },
+    "type": [
+      "retail",
+      "ecommerce",
+      "hr",
+      "accounting"
+    ],
+    "deploy": [
+      "local",
+      "cloud",
+      "hybrid"
+    ],
+    "pricing": [
+      "annual",
+      "lifetime"
+    ],
+    "featured": 1,
+    "isNew": 0,
+    "link": "/salepro",
+    "cta": "Voir le produit",
+    "tags": [
+      "laravel",
+      "pos",
+      "inventory",
+      "stock",
+      "warehouse",
+      "supermarket",
+      "enterprise",
+      "purchase",
+      "sale",
+      "payment",
+      "hrm",
+      "accounting",
+      "dashboard",
+      "reporting",
+      "multi-warehouse",
+      "barcode",
+      "receipt-printer",
+      "weight-scale",
+      "multi-currency",
+      "multi-language",
+      "gst",
+      "whatsapp",
+      "ecommerce-addon",
+      "woocommerce-addon",
+      "offline",
+      "online",
+      "self-hosted",
+      "open-source"
+    ],
+    "marketingHighlights": [
+      "Interface POS moderne, rapide et tactile, prete pour le terrain.",
+      "Controle stock avance avec lot, expiration, variantes et multi-depots.",
+      "Vue business en temps reel avec dashboard intelligent et rapports filtres.",
+      "Plateforme complete: POS + inventory + HRM + accounting dans une seule base."
+    ],
+    "keyBenefits": [
+      "Advanced stock & inventory control with expiry, variants & multi-warehouse",
+      "Modern POS interface with multi-currency and payment gateway support",
+      "Smart dashboard and detailed real-time reporting",
+      "Built-in HRM module with attendance, payroll, and departments",
+      "Basic accounting module with bank transfers and balance sheets",
+      "Multi-language, multi-currency, and GST-ready",
+      "Supports barcode scanners, receipt printers, and weight scales"
+    ],
+    "coreFeatures": [
+      {
+        "title": "Dashboard",
+        "items": [
+          "Sales, purchases, returns, and profit overview",
+          "Monthly charts, cash flow, top-selling products",
+          "Recent activities: sales, purchases, quotations"
+        ]
+      },
+      {
+        "title": "Products",
+        "items": [
+          "Standard, digital, combo, and service types",
+          "Variants, batch/expiry, IMEI/serial, weight scale support",
+          "Tax, GST, promotional pricing, barcode printing",
+          "CSV import/export, product units, multiple images"
+        ]
+      },
+      {
+        "title": "Sales & POS",
+        "items": [
+          "Touchscreen-friendly POS design",
+          "Installment payment feature",
+          "Coupons, discounts, tax, shipping, gift card",
+          "Draft/hold sale, suspend sales, multiple payments",
+          "Payment gateways + custom payments, email / WhatsApp receipts",
+          "Customer display feature and sales commission agents",
+          "Search by product code, variant code, IMEI/serial",
+          "Sell by retail / wholesale price"
+        ]
+      },
+      {
+        "title": "Purchases",
+        "items": [
+          "Vendor & purchase order management",
+          "Returns, taxes, discounts, shipping",
+          "Document uploads, CSV import",
+          "Purchase payment and payment document upload"
+        ]
+      },
+      {
+        "title": "Stock Transfer & Adjustments",
+        "items": [
+          "Multi-warehouse transfers",
+          "Stock counting & adjustment tools",
+          "Bulk stock adjustment via CSV upload"
+        ]
+      },
+      {
+        "title": "Production / Manufacturing",
+        "items": [
+          "Log production of combo products from ingredient products",
+          "Production increases end-product stock and decreases ingredient stock",
+          "Recipe / BOM (Bill of Materials) support"
+        ]
+      },
+      {
+        "title": "Accounting",
+        "items": [
+          "Bank accounts, transfers, balance sheet",
+          "Auto-linked transactions"
+        ]
+      },
+      {
+        "title": "HRM",
+        "items": [
+          "Employee records, departments, payroll",
+          "Attendance, holiday/leave management"
+        ]
+      },
+      {
+        "title": "People",
+        "items": [
+          "Customers, suppliers and dual-role profiles",
+          "Opening balance / due tracking",
+          "Bulk promotion message via WhatsApp"
+        ]
+      },
+      {
+        "title": "Reports",
+        "items": [
+          "Sales, purchase, profit/loss, payments, customers, suppliers",
+          "Stock expiry, alerts, daily targets, product reports",
+          "CSV/PDF export with advanced filters"
+        ]
+      },
+      {
+        "title": "Settings",
+        "items": [
+          "Invoice printing and layout options",
+          "Roles & permissions, user groups, tax rates",
+          "Custom fields, SMS integrations, backup",
+          "Dark mode, table layout, discount plans"
+        ]
+      }
+    ],
+    "addons": [
+      "eCommerce Add-on - Launch your eCommerce store from the same dashboard",
+      "Restaurant Add-on - Kitchen, waiter, floor and tables management (Coming Soon)",
+      "WooCommerce Add-on - Sync POS with your WooCommerce store"
+    ],
+    "globalReady": "SalePro supports 18+ languages and all currencies. Easy to localize and deploy worldwide.",
+    "faq": [
+      {
+        "q": "Can I use it offline?",
+        "a": "Yes. It works with Laragon, XAMPP, or MAMP. Official support focuses on live server setup."
+      },
+      {
+        "q": "What payment methods are supported?",
+        "a": "Cash, Card, Razorpay, Cheque, Gift Card, Reward Points, plus custom payment options."
+      },
+      {
+        "q": "Are future updates free?",
+        "a": "Yes. Lifetime free updates are included."
+      }
+    ],
+    "supportLinks": {
+      "documentation": "#",
+      "support": "#",
+      "featureRequest": "#",
+      "livePreview": "#",
+      "screenshots": "#"
+    }
+  },
+  "compta-bf": {
+    "slug": "compta-bf",
+    "name": "Compta BF",
+    "short": "Pilotage comptable simplifie pour PME locales.",
+    "type": [
+      "accounting"
+    ],
+    "deploy": [
+      "cloud"
+    ],
+    "pricing": [
+      "annual"
+    ],
+    "featured": 0,
+    "isNew": 1,
+    "image": "https://picsum.photos/id/20/900/700",
+    "tags": [
+      "comptabilite",
+      "rapports",
+      "fiscalite"
+    ],
+    "link": "#",
+    "cta": "Bientot disponible"
+  },
+  "rh-flow": {
+    "slug": "rh-flow",
+    "name": "RH Flow",
+    "short": "Gestion des conges, presences et dossiers employes.",
+    "type": [
+      "hr"
+    ],
+    "deploy": [
+      "cloud",
+      "hybrid"
+    ],
+    "pricing": [
+      "annual"
+    ],
+    "featured": 0,
+    "isNew": 0,
+    "image": "https://picsum.photos/id/64/900/700",
+    "tags": [
+      "rh",
+      "conges",
+      "personnel"
+    ],
+    "link": "#",
+    "cta": "Bientot disponible"
+  },
+  "shop-lite": {
+    "slug": "shop-lite",
+    "name": "Shop Lite",
+    "short": "Point de vente leger pour petits commerces.",
+    "type": [
+      "retail"
+    ],
+    "deploy": [
+      "local"
+    ],
+    "pricing": [
+      "lifetime"
+    ],
+    "featured": 0,
+    "isNew": 1,
+    "image": "https://picsum.photos/id/292/900/700",
+    "tags": [
+      "pos",
+      "retail",
+      "caisse"
+    ],
+    "link": "#",
+    "cta": "Bientot disponible"
+  },
+  "salepro-restaurant": {
+    "slug": "salepro-restaurant",
+    "name": "SalePro Restaurant",
+    "short": "Application dediee aux restaurants: salle, cuisine, tables, commandes et caisse. [Bientot]",
+    "type": [
+      "restaurant"
+    ],
+    "deploy": [
+      "cloud",
+      "hybrid"
+    ],
+    "pricing": [
+      "annual"
+    ],
+    "featured": 1,
+    "isNew": 1,
+    "image": "https://picsum.photos/id/1080/900/700",
+    "tags": [
+      "restaurant",
+      "kitchen",
+      "tables",
+      "waiter",
+      "pos",
+      "online-order"
+    ],
+    "link": "/salepro/restaurant",
+    "cta": "Voir la page"
+  }
+}
